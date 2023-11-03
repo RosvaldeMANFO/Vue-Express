@@ -1,33 +1,39 @@
 import mongoose, { Schema } from "mongoose";
-import { Roles } from "./constants";
+import { CollectionName, Roles } from "./constants";
 import Utils from "../utils/utils";
 
 export interface IUser extends Document {
-  name: string;
+  fullName: string;
   email: string;
   password: string;
   roles: string[];
   comparePassword: (enteredPassword: string) => boolean;
 }
 
+export type UserInput = {
+  fullName: string;
+  email: string;
+  password: string;
+};
+
 const userSchema = new Schema<IUser>(
   {
-    name: {
+    fullName: {
       type: String,
       required: true,
     },
     email: {
-      types: String,
+      type: String,
       required: true,
       unique: true,
     },
     password: {
-      types: String,
+      type: String,
       required: true,
     },
     roles: {
       type: [String],
-      default: [Roles.Visitor],
+      default: [Roles.Reader],
     },
   },
   {
@@ -46,6 +52,6 @@ userSchema.methods.comparePassword = async function (enteredPassword: string) {
   return await Utils.compareEncrypted(enteredPassword, this.password);
 };
 
-const User = mongoose.model("User", userSchema);
+const User = mongoose.model(CollectionName.Users, userSchema);
 
 export default User;

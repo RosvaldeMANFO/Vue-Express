@@ -13,4 +13,9 @@ export default class Utils {
   ): Promise<boolean> {
     return compareSync(value, encrypted);
   }
+
+  static isValidDate(value: string) {
+    return !isNaN(Date.parse(value));
+  }
+
 }

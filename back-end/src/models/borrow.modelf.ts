@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { BookStates, BorrowStatus, Roles } from "./constants";
+import { BookState, BorrowStatus, CollectionName } from "./constants";
 
 export interface IBorrow extends Document {
   userId: string;
@@ -12,6 +12,15 @@ export interface IBorrow extends Document {
   returnState: string;
   receivedState: string;
   borrowStatus: string;
+}
+
+export type BorrowInput = {
+  userId: string;
+  bookId: string;
+  userEmail: string;
+  bookIsbn: string;
+  bookTitle: string;
+  borrowStatus: string
 }
 
 const borrowSchema = new Schema<IBorrow>({
@@ -32,11 +41,11 @@ const borrowSchema = new Schema<IBorrow>({
     required: true,
   },
   bookTitle: {
-    types: String,
+    type: String,
     unique: true,
   },
   receivedDate: {
-    types: Date,
+    type: Date,
     required: true,
   },
   returnDate: {
@@ -44,17 +53,17 @@ const borrowSchema = new Schema<IBorrow>({
     required: true,
   },
   receivedState: {
-    types: String,
-    default: BookStates.Correct,
-    enum: BookStates
+    type: String,
+    default: BookState.Correct,
+    enum: BookState
   },
   returnState: {
-    types: String,
-    default: BookStates.Correct,
-    enum: BookStates
+    type: String,
+    default: BookState.Correct,
+    enum: BookState
   },
   borrowStatus: {
-    types: String,
+    type: String,
     default: BorrowStatus.Waiting,
     enum: BorrowStatus
   }
@@ -64,6 +73,6 @@ const borrowSchema = new Schema<IBorrow>({
 });
 
 
-const Borrow = mongoose.model("Borrows", borrowSchema);
+const Borrow = mongoose.model(CollectionName.Borrows, borrowSchema);
 
 export default Borrow;

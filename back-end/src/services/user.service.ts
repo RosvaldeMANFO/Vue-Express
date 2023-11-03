@@ -1,101 +1,59 @@
-import { Collection } from "mongodb";
 import Auth from "../middlewares/auth";
-import {
-  RequestResult,
-  SuccessResult,
-  HttpCode,
-  ErrorResult,
-} from "../utils/request_result";
+import { RequestSuccess, HttpCode, RequestFailure } from "../utils/request_result";
 import Utils from "../utils/utils";
-import User from "../models/borrow.modelf";
+import User, { UserInput } from "../models/user.model";
 
-interface UserService {
-  register(
-    username: string,
-    email: string,
-    password: string,
-    phoneNumber: string
-  ): Promise<RequestResult<string>>;
+interface IUserService {
+  register(fullName: string, email: string, password: string): Promise<void>;
 
-  login(email: string, password: string): Promise<RequestResult<any>>;
+  login(email: string, password: string): Promise<RequestSuccess<any>>;
 }
 
-class UserServiceImplementation implements UserService {
-  constructor(private userCollection: Collection<User>) {}
+class UserService implements IUserService {
+  constructor() {}
 
   register = async (
-    username: string,
-    email: string,
-    password: string,
-    phoneNumber: string
-  ): Promise<RequestResult<string>> => {
-    try {
-      let hashedPassword = await Utils.encrypt(password);
-      let foundUser: User = (await this.userCollection.findOne({ email: email })) as User;
-      if (foundUser != null) {
-        console.log(foundUser.email)
-        throw Error("User already exists");
-      }
-      let user = new User(username, email, hashedPassword, phoneNumber);
-      await this.userCollection.insertOne(user);
-      return new SuccessResult<string>(
-        HttpCode.OK,
-        "User created",
-        "Registering succeed"
-      );
-    } catch (error) {
-      return new ErrorResult<string>(
-        HttpCode.INTERNAL_SERVER_ERROR,
-        "Registration failed",
-        (error as Error).message
-      );
-    }
-  };
-
-  login = async (
+    fullName: string,
     email: string,
     password: string
-  ): Promise<RequestResult<any>> => {
-    try {
-      let query = { email: email };
-      const foundUser = await this.userCollection.findOne(query);
-      if (!foundUser) {
-        return new ErrorResult<string>(
-          HttpCode.NOT_FOUND,
-          "Invalid email",
-          "Email address was invalid"
-        );
-      } else {
-        const result = await Utils.compareEncrypted(
-          password,
-          foundUser.password
-        );
-        if (!result) {
-          return new ErrorResult<string>(
-            HttpCode.NOT_FOUND,
-            "Invalid password",
-            "Password was'nt correct"
-          );
-        }
-        const token = Auth.provideToken(foundUser.email);
-        return new SuccessResult<any>(
-          HttpCode.OK,
-          {
-            userId: foundUser._id,
-            email: foundUser.email,
-            token: token,
-          },
-          "Login succeed"
-        );
+  ): Promise<void> => {
+    const newUser: UserInput = {
+      fullName: fullName,
+      email: email,
+      password: password,
+    };
+    const foundUser = await User.findOne({ email: email });
+    if (foundUser != null) {
+      throw new RequestFailure(
+        HttpCode.BAD_REQUEST,
+        "Registration failed",
+        "This email address is already used"
+      );
+    }
+    await User.create(newUser);
+  };
+
+  login = async (email: string, password: string): Promise<RequestSuccess<any>> => {
+    let query = { email: email };
+    const user = await User.findOne(query);
+    if (!user) {
+      throw new Error("Invalid email address");
+    } else {
+      const result = await Utils.compareEncrypted(password, user.password);
+      if (!result) {
+        throw new Error("Invalid password");
       }
-    } catch (error) {
-      return new ErrorResult<string>(
-        HttpCode.INTERNAL_SERVER_ERROR,
-        "An unexpected error occurred",
-        (error as Error).message
+      const token = Auth.provideToken(user.email);
+      return new RequestSuccess<{}>(
+        HttpCode.OK,
+        {
+          user,
+          token,
+        },
+        "Login succeed"
       );
     }
   };
 }
 
-export { UserServiceImplementation, UserService };
+export { UserService, IUserService };

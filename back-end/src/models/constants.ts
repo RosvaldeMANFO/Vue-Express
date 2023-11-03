@@ -1,7 +1,13 @@
+export enum CollectionName {
+  Users = "users",
+  Books = "books",
+  Borrows = "borrows"
+}
+
 export enum Roles {
   Admin = "ADMIN",
   Employee = "EMPLOYEE",
-  Visitor = "VISITOR",
+  Reader = "READER",
 }
 
 export enum BookStatus {
@@ -9,7 +15,7 @@ export enum BookStatus {
   Unavailable = "UN AVAILABLE"
 }
 
-export enum LiteralGenders {
+export enum LiteralGender {
   Narrative = "NARRATIVE",
   Theatrical = "THEATRICAL",
   Poetic = "POETIC",
@@ -24,7 +30,7 @@ export enum BorrowStatus {
   Waiting = "WAITING FOR"
 }
 
-export enum BookStates {
+export enum BookState {
   New = "BRAND NEW",
   Correct = "CORRECT",
   Worn = "WORN OUT",

@@ -1,5 +1,10 @@
 import mongoose, { Schema } from "mongoose";
-import { BookStates, BookStatus, LiteralGenders } from "./constants";
+import {
+  BookState,
+  BookStatus,
+  LiteralGender,
+  CollectionName,
+} from "./constants";
 
 export interface IBook extends Document {
   isbn: string;
@@ -7,11 +12,31 @@ export interface IBook extends Document {
   genre: string;
   author: string;
   publicationDate: Date;
-  editionHouse: string;
+  publishingHouse: string;
   status: string;
   state: string;
   nbmCopies: number;
 }
+
+export type BookInput = {
+  isbn: string;
+  title: string;
+  genre: string;
+  author: string;
+  publicationDate: Date;
+  publishingHouse: string;
+  nbmCopies: number;
+  status?: string;
+  state?: string;
+};
+
+export type FilterOption = {
+  genre?: string;
+  title?: string;
+  author?: string;
+  publicationDate?: string;
+  publishingHouse?: string;
+};
 
 const bookSchema = new Schema<IBook>(
   {
@@ -21,15 +46,15 @@ const bookSchema = new Schema<IBook>(
       unique: true,
     },
     title: {
-      types: String,
+      type: String,
       required: true,
       unique: true,
     },
     genre: {
-      types: String,
+      type: String,
       required: true,
-      default: LiteralGenders.Neutral,
-      enum: LiteralGenders
+      default: LiteralGender.Neutral,
+      enum: LiteralGender,
     },
     author: {
       type: String,
@@ -39,19 +64,19 @@ const bookSchema = new Schema<IBook>(
       type: Date,
       required: true,
     },
-    editionHouse: {
+    publishingHouse: {
       type: String,
       required: true,
     },
     status: {
       type: String,
       default: BookStatus.Available,
-      enum: BookStatus
+      enum: BookStatus,
     },
     state: {
       type: String,
-      default: BookStates.Correct,
-      enum: BookStates
+      default: BookState.Correct,
+      enum: BookState,
     },
     nbmCopies: {
       type: Number,
@@ -63,6 +88,6 @@ const bookSchema = new Schema<IBook>(
   }
 );
 
-const Book = mongoose.model("Books", bookSchema);
+const Book = mongoose.model(CollectionName.Books, bookSchema);
 
 export default Book;

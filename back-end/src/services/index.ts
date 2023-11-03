@@ -1,18 +1,20 @@
-import { Db } from "mongodb";
-import { CollectionName } from "../models";
-import { UserService,UserServiceImplementation } from "./user.service";
+import { BookService, IBookService } from "./book.service";
+import { BorrowService, IBorrowService } from "./borrow.service";
+import { IUserService,UserService } from "./user.service";
 
 export default class ApplicationService{
-    userService!: UserService
+    userService!: IUserService
+    bookService!: IBookService
+    borrowService!: IBorrowService
     
-    constructor(private database: Db){
+    constructor(){
         this.initializeServices()
     }
 
     private initializeServices(){
-        this.userService = new UserServiceImplementation(
-            this.database.collection(CollectionName.USERS)
-        )
+        this.userService = new UserService()
+        this.bookService = new BookService()
+        this.borrowService = new BorrowService()
     }
     
 }

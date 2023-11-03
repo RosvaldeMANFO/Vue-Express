@@ -1,4 +1,4 @@
-enum HttpCode {
+export enum HttpCode {
     OK = 200,
     NO_CONTENT = 204,
     BAD_REQUEST = 400,
@@ -7,14 +7,7 @@ enum HttpCode {
     INTERNAL_SERVER_ERROR = 500,
 }
 
-interface RequestResult<T> {
-    readonly httpCode: HttpCode;
-    readonly message?: string;
-    readonly data?: T;
-    readonly description: string;
-}
-
-class SuccessResult<T> implements RequestResult<T> {
+export class RequestSuccess<T>{
     httpCode: HttpCode;
     data?: T;
     description: string;
@@ -28,7 +21,7 @@ class SuccessResult<T> implements RequestResult<T> {
     }
 }
 
-class ErrorResult<T> extends Error implements RequestResult<T>{
+export class RequestFailure extends Error{
     httpCode: HttpCode;
     message: string;
     description: string;
@@ -42,11 +35,10 @@ class ErrorResult<T> extends Error implements RequestResult<T>{
 
         Object.setPrototypeOf(this, new.target.prototype);
 
+        this.httpCode = httpCode
         this.message = message
-        this.httpCode = httpCode;
-        this.description = description;
+        this.description = description
+        Error.captureStackTrace(this, this.constructor);
     }
 
 }
-
-export { HttpCode, SuccessResult, ErrorResult, RequestResult }

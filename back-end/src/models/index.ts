@@ -1,18 +1,10 @@
-import { Db, MongoClient } from "mongodb";
+import mongoose, { ConnectOptions } from "mongoose";
 
-enum CollectionName {
-  USERS = "users",
-}
+mongoose.Promise = global.Promise;
 
-class Database {
-  db!: Db;
+const connectToDatabase = async (): Promise<void> => {
+  let cnString: string = `${process.env.DB_CONN_STRING}`;
+  await mongoose.connect(cnString);
+};
 
-  connectToDatabase = () => {
-    let conString: string = `${process.env.DB_CONN_STRING}`;
-    let client: MongoClient = new MongoClient(conString);
-    client.connect();
-    this.db = client.db(`${process.env.DB_NAME}`);
-  };
-}
-
-export {Database, CollectionName}
+export { connectToDatabase };
