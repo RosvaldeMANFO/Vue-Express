@@ -1,10 +1,11 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
 import {
   BookState,
   BookStatus,
   LiteralGender,
   CollectionName,
 } from "./constants";
+import BookCopies from "./book_copies.model";
 
 export interface IBook extends Document {
   isbn: string;
@@ -15,7 +16,7 @@ export interface IBook extends Document {
   publishingHouse: string;
   status: string;
   state: string;
-  nbmCopies: number;
+  copy: string;
 }
 
 export type BookInput = {
@@ -25,7 +26,7 @@ export type BookInput = {
   author: string;
   publicationDate: Date;
   publishingHouse: string;
-  nbmCopies: number;
+  copy: string;
   status?: string;
   state?: string;
 };
@@ -78,15 +79,23 @@ const bookSchema = new Schema<IBook>(
       default: BookState.Correct,
       enum: BookState,
     },
-    nbmCopies: {
-      type: Number,
-      default: 0,
+    copy: {
+      type: String,
+      required: true,
     },
   },
   {
     timestamps: true,
   }
 );
+
+bookSchema.pre("save", async function (next) {
+  const stock = await BookCopies.findById(this.copy);
+  if (stock == null) {
+    throw new Error("There is not any collection for the books of this title");
+  }
+  next()
+});
 
 const Book = mongoose.model(CollectionName.Books, bookSchema);
 

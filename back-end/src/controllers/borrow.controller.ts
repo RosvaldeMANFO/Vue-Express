@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import { BorrowService } from "../services/borrow.service";
+import { IBorrowService } from "../services/borrow.service";
 import { HttpCode } from "../utils/request_result";
 
 export default class BorrowController {
-  constructor(private service: BorrowService) {}
+  constructor(private service: IBorrowService) {}
 
   createBorrow = async (req: Request, res: Response, next: NextFunction) => {
     try {

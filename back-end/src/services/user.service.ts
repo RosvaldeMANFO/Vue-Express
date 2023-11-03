@@ -1,10 +1,10 @@
 import Auth from "../middlewares/auth";
 import { RequestSuccess, HttpCode, RequestFailure } from "../utils/request_result";
 import Utils from "../utils/utils";
-import User, { UserInput } from "../models/user.model";
+import User, { IUser, UserInput } from "../models/user.model";
 
 interface IUserService {
-  register(fullName: string, email: string, password: string): Promise<void>;
+  register(user: UserInput): Promise<void>;
 
   login(email: string, password: string): Promise<RequestSuccess<any>>;
 }
@@ -13,16 +13,14 @@ class UserService implements IUserService {
   constructor() {}
 
   register = async (
-    fullName: string,
-    email: string,
-    password: string
+    user: UserInput
   ): Promise<void> => {
     const newUser: UserInput = {
-      fullName: fullName,
-      email: email,
-      password: password,
+      fullName: user.fullName,
+      email: user.email,
+      password: user.password,
     };
-    const foundUser = await User.findOne({ email: email });
+    const foundUser = await User.findOne({ email: user.email });
     if (foundUser != null) {
       throw new RequestFailure(
         HttpCode.BAD_REQUEST,

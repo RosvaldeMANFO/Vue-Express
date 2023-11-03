@@ -1,7 +1,8 @@
 export enum CollectionName {
   Users = "users",
   Books = "books",
-  Borrows = "borrows"
+  Borrows = "borrows",
+  BookCopies = "bookCopies"
 }
 
 export enum Roles {
@@ -27,11 +28,12 @@ export enum LiteralGender {
 export enum BorrowStatus {
   Approved = "APPROVED",
   ToReturn = "TO RETURN",
-  Waiting = "WAITING FOR"
+  OnHold = "ON HOLD",
+  Returned = "RETURNED"
 }
 
 export enum BookState {
   New = "BRAND NEW",
   Correct = "CORRECT",
-  Worn = "WORN OUT",
+  Worn = "DAMAGED",
 }
