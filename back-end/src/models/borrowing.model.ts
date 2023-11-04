@@ -2,13 +2,13 @@ import mongoose, { Schema } from "mongoose";
 import {
   BookState,
   BookStatus,
-  BorrowStatus,
+  BorrowingStatus,
   CollectionName,
 } from "./constants";
 import User from "./user.model";
 import Book from "./book.model";
 
-export interface IBorrow extends Document {
+export interface IBorrowing extends Document {
   userId: string;
   bookId: string;
   userEmail: string;
@@ -21,7 +21,7 @@ export interface IBorrow extends Document {
   borrowStatus: string;
 }
 
-export type BorrowInput = {
+export type BorrowingInput = {
   userId: string;
   bookId: string;
   userEmail: string;
@@ -29,7 +29,7 @@ export type BorrowInput = {
   bookTitle: string;
 };
 
-const borrowSchema = new Schema<IBorrow>(
+const borrowSchema = new Schema<IBorrowing>(
   {
     userId: {
       type: String,
@@ -73,8 +73,8 @@ const borrowSchema = new Schema<IBorrow>(
     },
     borrowStatus: {
       type: String,
-      default: BorrowStatus.OnHold,
-      enum: BorrowStatus,
+      default: BorrowingStatus.OnHold,
+      enum: BorrowingStatus,
     },
   },
   {
@@ -94,6 +94,6 @@ borrowSchema.pre("save", async function (next) {
   next()
 });
 
-const Borrow = mongoose.model(CollectionName.Borrows, borrowSchema);
+const Borrowing = mongoose.model(CollectionName.Borrows, borrowSchema);
 
-export default Borrow;
+export default Borrowing;

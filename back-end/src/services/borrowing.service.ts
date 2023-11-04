@@ -1,23 +1,24 @@
 import { HttpCode, RequestSuccess } from "../utils/request_result";
 import Book from "../models/book.model";
-import { BookStatus, BorrowStatus } from "../models/constants";
-import Borrow, { BorrowInput, IBorrow } from "../models/borrow.model";
+import { BookStatus, BorrowingStatus } from "../models/constants";
+import Borrow, { BorrowingInput, IBorrowing } from "../models/borrowing.model";
 import BookCopies from "../models/book_copies.model";
 
-export interface IBorrowService {
-  createBorrow(borrow: BorrowInput): Promise<void>;
-  updateBorrow(borrowId: string, borrow: IBorrow): Promise<void>;
-  deleteBorrow(borrowId: string): Promise<void>;
-  getAllBorrow(): Promise<RequestSuccess<IBorrow[]>>;
-  getBorrowByEmail(email: string): Promise<RequestSuccess<IBorrow[]>>;
+export interface IBorrowingService {
+  createBorrowing(borrow: BorrowingInput): Promise<void>;
+  updateBorrowing(borrowId: string, borrow: IBorrowing): Promise<void>;
+  deleteBorrowing(borrowId: string): Promise<void>;
+  getAllBorrowings(): Promise<RequestSuccess<IBorrowing[]>>;
+  getBorrowingByEmail(email: string): Promise<RequestSuccess<IBorrowing[]>>;
 }
 
-export class BorrowService implements IBorrowService {
-  async createBorrow(borrow: BorrowInput): Promise<void> {
+export class BorrowingService implements IBorrowingService {
+ 
+  async createBorrowing(borrow: BorrowingInput): Promise<void> {
     await Borrow.create(borrow);
   }
 
-  async updateBorrow(borrowId: string, borrow: IBorrow): Promise<void> {
+  async updateBorrowing(borrowId: string, borrow: IBorrowing): Promise<void> {
     await Borrow.findByIdAndUpdate(borrowId, borrow);
     try {
       await this.updateStock(borrowId, borrow.bookId, borrow.borrowStatus);
@@ -26,16 +27,16 @@ export class BorrowService implements IBorrowService {
     }
   }
 
-  async deleteBorrow(borrowId: string): Promise<void> {
+  async deleteBorrowing(borrowId: string): Promise<void> {
     await Borrow.findByIdAndDelete(borrowId);
   }
 
-  async getAllBorrow(): Promise<RequestSuccess<IBorrow[]>> {
+  async getAllBorrowings(): Promise<RequestSuccess<IBorrowing[]>> {
     const result = await Borrow.find();
     return new RequestSuccess(HttpCode.OK, result, "Getting all borrow");
   }
 
-  async getBorrowByEmail(email: string): Promise<RequestSuccess<IBorrow[]>> {
+  async getBorrowingByEmail(email: string): Promise<RequestSuccess<IBorrowing[]>> {
     const result = await Borrow.find({ userEmail: email });
     return new RequestSuccess(
       HttpCode.OK,
@@ -53,8 +54,8 @@ export class BorrowService implements IBorrowService {
     const stock = await BookCopies.findById(book?.copy);
     const borrow = await Borrow.findById(borrowId);
     if (
-      borrowStatus == BorrowStatus.Approved &&
-      borrow?.borrowStatus != BorrowStatus.Approved
+      borrowStatus == BorrowingStatus.Approved &&
+      borrow?.borrowStatus != BorrowingStatus.Approved
     ) {
       await BookCopies.findByIdAndUpdate(stock!.id, {
         quantity: stock!.quantity - 1,
@@ -67,8 +68,8 @@ export class BorrowService implements IBorrowService {
       });
     }
     if (
-      borrowStatus == BorrowStatus.Returned &&
-      borrow?.borrowStatus != BorrowStatus.Returned
+      borrowStatus == BorrowingStatus.Returned &&
+      borrow?.borrowStatus != BorrowingStatus.Returned
     ) {
       await BookCopies.findByIdAndUpdate(stock!.id, {
         quantity: stock!.quantity + 1,

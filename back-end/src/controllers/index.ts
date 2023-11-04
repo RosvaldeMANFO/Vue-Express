@@ -1,7 +1,7 @@
 import ApplicationService from "../services"
 import BookController from "./book.controller"
 import { BookCopiesController } from "./book_copies.controller"
-import BorrowController from "./borrow.controller"
+import BorrowController from "./borrowing.controller"
 import UserController from "./user.controller"
 
 export default class ApplicationController{

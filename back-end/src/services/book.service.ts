@@ -1,4 +1,3 @@
-import { Types } from "mongoose";
 import Book, { BookInput, FilterOption, IBook } from "../models/book.model";
 import { RequestSuccess, HttpCode } from "../utils/request_result";
 import Utils from "../utils/utils";

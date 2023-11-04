@@ -25,7 +25,7 @@ export enum LiteralGender {
   Neutral = "NEUTRAL"
 }
 
-export enum BorrowStatus {
+export enum BorrowingStatus {
   Approved = "APPROVED",
   ToReturn = "TO RETURN",
   OnHold = "ON HOLD",
