@@ -26,10 +26,18 @@ const userSchema = new Schema<IUser>(
       type: String,
       required: true,
       unique: true,
+      validate: {
+        validator: Utils.emailValidator,
+        message: "Email address is not conform"
+      }
     },
     password: {
       type: String,
       required: true,
+      validate: {
+        validator: Utils.passwordValidator,
+        message: "Invalid password. Password most have 8 characters or more and contain a number, upper case an special character such as &,@,!,#,^,/"
+      }
     },
     role: {
       type: String,

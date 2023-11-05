@@ -14,7 +14,7 @@ const connectToDatabase = async (): Promise<void> => {
       User.create({
         fullName: "Admin",
         email: "Admin@admin.com",
-        password: "Admin",
+        password: "Admin@007",
         role: Roles.Admin
       })
     }

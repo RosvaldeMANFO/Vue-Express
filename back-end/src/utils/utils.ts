@@ -18,4 +18,13 @@ export default class Utils {
     return !isNaN(Date.parse(value));
   }
 
+  static passwordValidator(value: string): boolean{
+    const pattern = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[(&@!#^/)]).{8,}/
+    return pattern.test(value)
+  }
+
+  static emailValidator(value: string): boolean{
+    const pattern = /^[a-z0-9A-Z]+@[a-z]+\.[a-z]{2,3}$/
+    return pattern.test(value)
+  }
 }
