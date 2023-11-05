@@ -13,18 +13,13 @@ export interface IBorrowingService {
 }
 
 export class BorrowingService implements IBorrowingService {
- 
   async createBorrowing(borrow: BorrowingInput): Promise<void> {
     await Borrow.create(borrow);
   }
 
   async updateBorrowing(borrowId: string, borrow: IBorrowing): Promise<void> {
     await Borrow.findByIdAndUpdate(borrowId, borrow);
-    try {
-      await this.updateStock(borrowId, borrow.bookId, borrow.borrowStatus);
-    } catch (err) {
-      throw err;
-    }
+    await this.updateStock(borrowId, borrow.bookId, borrow.borrowStatus);
   }
 
   async deleteBorrowing(borrowId: string): Promise<void> {
@@ -36,7 +31,9 @@ export class BorrowingService implements IBorrowingService {
     return new RequestSuccess(HttpCode.OK, result, "Getting all borrow");
   }
 
-  async getBorrowingByEmail(email: string): Promise<RequestSuccess<IBorrowing[]>> {
+  async getBorrowingByEmail(
+    email: string
+  ): Promise<RequestSuccess<IBorrowing[]>> {
     const result = await Borrow.find({ userEmail: email });
     return new RequestSuccess(
       HttpCode.OK,

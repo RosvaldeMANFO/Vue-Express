@@ -7,7 +7,6 @@ export enum CollectionName {
 
 export enum Roles {
   Admin = "ADMIN",
-  Employee = "EMPLOYEE",
   Reader = "READER",
 }
 

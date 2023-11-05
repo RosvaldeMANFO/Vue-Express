@@ -7,12 +7,12 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-    console.log(err)
+  console.log(err)
   if (err instanceof RequestFailure) {
     res.status(err.httpCode).json({
-        status: err.httpCode,
-        message: err.message,
-        description: err.description
+      status: err.httpCode,
+      message: err.message,
+      description: err.description
     });
   } else {
     res

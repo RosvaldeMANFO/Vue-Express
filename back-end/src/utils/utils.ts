@@ -2,8 +2,8 @@ import { compareSync, genSaltSync, hashSync } from "bcrypt";
 
 export default class Utils {
   static async encrypt(value: string): Promise<string> {
-    let salt = genSaltSync(10);
-    let encrypted = hashSync(value, salt);
+    const salt = genSaltSync(10);
+    const encrypted = hashSync(value, salt);
     return encrypted;
   }
 

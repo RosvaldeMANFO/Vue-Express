@@ -7,15 +7,15 @@ export interface IBookCopies extends Document {
 }
 
 const bookCopiesSchema = new Schema<IBookCopies>({
-    title: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    quantity: {
-        type: Number,
-        default: 0
-    }
+  title: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  quantity: {
+    type: Number,
+    default: 0
+  }
 })
 
 export const BookCopies = mongoose.model(CollectionName.BookCopies, bookCopiesSchema);

@@ -1,4 +1,3 @@
-import Auth from "../middlewares/auth";
 import {
   RequestSuccess,
   HttpCode,
@@ -7,13 +6,14 @@ import {
 import Utils from "../utils/utils";
 import User, { IUser, UserInput } from "../models/user.model";
 import Borrowing from "../models/borrowing.model";
+import { Access } from "../middlewares/authorization";
 
 interface IUserService {
   register(user: UserInput): Promise<void>;
 
-  login(email: string, password: string): Promise<RequestSuccess<any>>;
+  login(email: string, password: string): Promise<RequestSuccess<unknown>>;
   getAllUsers(): Promise<RequestSuccess<IUser[]>>;
-  getUserHistory(userId: string): Promise<RequestSuccess<{}>>;
+  getUserHistory(userId: string): Promise<RequestSuccess<unknown>>;
 }
 
 class UserService implements IUserService {
@@ -39,8 +39,8 @@ class UserService implements IUserService {
   login = async (
     email: string,
     password: string
-  ): Promise<RequestSuccess<any>> => {
-    let query = { email: email };
+  ): Promise<RequestSuccess<unknown>> => {
+    const query = { email: email };
     const user = await User.findOne(query);
     if (!user) {
       throw new Error("Invalid email address");
@@ -49,8 +49,12 @@ class UserService implements IUserService {
       if (!result) {
         throw new Error("Invalid password");
       }
-      const token = Auth.provideToken(user.email);
-      return new RequestSuccess<{}>(
+      const token = Access.provideToken({
+        userId: user.id,
+        email: user.email,
+        role: user.role,
+      });
+      return new RequestSuccess<unknown>(
         HttpCode.OK,
         {
           user,
@@ -66,13 +70,19 @@ class UserService implements IUserService {
     return new RequestSuccess(HttpCode.OK, result, "Retrieving all user data");
   }
 
-  async getUserHistory(userId: string): Promise<RequestSuccess<{}>> {
-      const user = await User.findById(userId)
-      const borrow = await Borrowing.find({userId: userId}).sort({createdAt: 1})
-      return new RequestSuccess(HttpCode.OK, {
+  async getUserHistory(userId: string): Promise<RequestSuccess<unknown>> {
+    const user = await User.findById(userId);
+    const borrow = await Borrowing.find({ userId: userId }).sort({
+      createdAt: 1,
+    });
+    return new RequestSuccess(
+      HttpCode.OK,
+      {
         user,
         borrow,
-      }, "Retrieving user history")
+      },
+      "Retrieving user history"
+    );
   }
 }
 

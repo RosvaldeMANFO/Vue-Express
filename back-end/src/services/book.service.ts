@@ -39,15 +39,15 @@ export class BookService implements IBookService {
     return new RequestSuccess(HttpCode.OK, result, "");
   }
 
-  private cleanFilterOptions(options: FilterOption): Map<string, any>[] {
-    let result: Map<string, any>[] = [];
+  private cleanFilterOptions(options: FilterOption): Map<string, unknown>[] {
+    const result: Map<string, unknown>[] = [];
     Object.entries(options).forEach((element) => {
       if (element[1].length != 0) {
         if (Utils.isValidDate(element[1])) {
           const ct = new Map<string, string>([[element[0], element[1]]]);
           result.push(ct);
         } else {
-          const ct = new Map<string, any>([
+          const ct = new Map<string, unknown>([
             [element[0], { $regex: new RegExp(`.*${element[1]}.*`, "i") }],
           ]);
           result.push(ct);
