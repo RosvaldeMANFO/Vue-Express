@@ -12,6 +12,7 @@ export interface IBook extends Document {
   title: string;
   genre: string;
   author: string;
+  bookCover: string;
   publicationDate: Date;
   publishingHouse: string;
   status: string;
@@ -24,6 +25,7 @@ export type BookInput = {
   title: string;
   genre: string;
   author: string;
+  bookCover?: string;
   publicationDate: Date;
   publishingHouse: string;
   copy: string;
@@ -61,6 +63,10 @@ const bookSchema = new Schema<IBook>(
       type: String,
       required: true,
     },
+    bookCover: {
+      type: String,
+      required: false,
+    },
     publicationDate: {
       type: Date,
       required: true,
@@ -94,7 +100,7 @@ bookSchema.pre("save", async function (next) {
   if (stock == null) {
     throw new Error("There is not any collection for the books of this title");
   }
-  next()
+  next();
 });
 
 const Book = mongoose.model(CollectionName.Books, bookSchema);
