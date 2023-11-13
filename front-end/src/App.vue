@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+import Notifications from './components/Notifications.vue';
+import { Ref, ref } from 'vue';
+import { useSessionStore } from './store';
+import UserDash from './views/user.views/UserDash.vue';
+import { storeToRefs } from 'pinia';
+
+let store = useSessionStore()
+const { exp } = storeToRefs(store)
+
+const sessionExpired: Ref<boolean> = ref(exp.value < Math.floor(Date.now() / 1000))
 </script>
 
 <template>
-  <div class="card-md bg-red-200 m-3 rounded-md p-3">
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Vite + Vue" />
+  <RouterView v-show="sessionExpired" />
+  <UserDash v-show="!sessionExpired && store.role == 'READER'" />
+  <Notifications />
 </template>
-
-<style scoped>
-</style>
