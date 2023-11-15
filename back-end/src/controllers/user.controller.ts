@@ -38,9 +38,28 @@ export default class UserController {
   getUserHistory = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await this.service.getUserHistory(req.params.userId);
-      res.status(result.httpCode).json(result);
+      res.status(result.httpCode).json(result.data);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  getUserById = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await this.service.getUserById(req.params.userId);
+      res.status(result.httpCode).json(result.data);
     } catch (err) {
       next(err);
     }
   };
+
+  cancelRequest = async(req: Request, res: Response, next: NextFunction) => {
+    try{
+      const result = await this.service.
+      cancelRequest(req.body.requestId)
+      res.status(result.httpCode).json(result.data)
+    } catch(err) {
+      next(err)
+    }
+  }
 }

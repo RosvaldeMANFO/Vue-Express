@@ -16,7 +16,7 @@ function toggleDrawer() {
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
                 </svg>
             </button>
-            <div class="absolute z-20 top-12 inset-y-0 left-0 w-64 bg-gray-800 p-4 transition-transform transform"
+            <div class="absolute top-12 inset-y-0 left-0 w-64 bg-gray-800 p-4 transition-transform transform"
                 :class="{ '-translate-x-full': !drawerState }">
                 <nav class="mt-4 flex flex-col gap-5">
                     <router-link to="/catalog"
@@ -32,10 +32,6 @@ function toggleDrawer() {
                         :class="{ 'dark:bg-green-300 bg-gray-400': $route.name == 'logout' }">Logout</router-link>
                 </nav>
             </div>
-        </div>
-        <ReaderMenu :is-drawer-open.sync="drawerState" class="top-12 fixed" />
-        <div class="w-full p-10 flex items-center justify-center">
-            <router-view class="mt-9" />
         </div>
     </div>
 </template>

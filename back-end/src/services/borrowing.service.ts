@@ -1,4 +1,8 @@
-import { HttpCode, RequestSuccess } from "../utils/request_result";
+import {
+  HttpCode,
+  RequestFailure,
+  RequestSuccess,
+} from "../utils/request_result";
 import Book from "../models/book.model";
 import { BookStatus, BorrowingStatus } from "../models/constants";
 import Borrow, { BorrowingInput, IBorrowing } from "../models/borrowing.model";
@@ -14,6 +18,23 @@ export interface IBorrowingService {
 
 export class BorrowingService implements IBorrowingService {
   async createBorrowing(borrow: BorrowingInput): Promise<void> {
+    const exist = await Borrow.findOne({
+      userId: borrow.userId,
+      bookTitle: borrow.bookTitle,
+    });
+    if (
+      exist &&
+      ![
+        BorrowingStatus.Canceled.valueOf(),
+        BorrowingStatus.Returned.valueOf(),
+      ].includes(exist.borrowStatus)
+    ) {
+      throw new RequestFailure(
+        HttpCode.UNAUTHORIZED,
+        "You already have a request for this book",
+        "You can not emit multiple request fo the same book"
+      );
+    }
     await Borrow.create(borrow);
   }
 

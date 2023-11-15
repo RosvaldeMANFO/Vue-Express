@@ -18,12 +18,12 @@ export type Book = {
 };
 
 export type BorrowInput = {
-    userId: string,
-    bookId: string,
-    userEmail: string,
-    bookIsbn: string,
-    bookTitle: string,
-}
+  userId: string;
+  bookId: string;
+  userEmail: string;
+  bookIsbn: string;
+  bookTitle: string;
+};
 
 export class BookService {
   private baseUrl = import.meta.env.VITE_API_BASE;
@@ -44,23 +44,38 @@ export class BookService {
 
   async requestBorrow(data: BorrowInput): Promise<void> {
     const session = useSessionStore();
-    const url = `${this.baseUrl}/borrow/create`;
+    const url = `${this.baseUrl}/borrowing/create`;
     try {
-      const result = await axios.post(url, 
-        data,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-            Authorization: `Bearer ${session.token}`,
-          },
-        });
+      const result = await axios.post(url, data, {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${session.token}`,
+        },
+      });
       return result.data;
     } catch (err) {
       if (axios.isAxiosError(err)) {
         const message: string = err?.response?.data.message;
         throw Error(message);
       }
+      throw err;
+    }
+  }
+
+  async searchBook(data: {}): Promise<Array<Book>> {
+    const session = useSessionStore();
+    const url = `${this.baseUrl}/book/find`;
+    try {
+      const result = await axios.post(url, data, {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${session.token}`,
+        },
+      });
+      return result.data;
+    } catch (err) {
       throw err;
     }
   }

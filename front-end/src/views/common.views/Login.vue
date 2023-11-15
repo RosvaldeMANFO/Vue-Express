@@ -30,7 +30,7 @@ async function submit(event: Event) {
         const result = (await service.login(data.value.email, data.value.password) as Payload)
         store.$patch(result)
         localStorage.setItem("session", JSON.stringify(store.$state))
-        router.push({ name: "onboarding", replace: true })
+        router.push({ name: store.role, replace: true })
     } catch (err) {
         state.value = false
         notify({
@@ -44,9 +44,9 @@ async function submit(event: Event) {
 </script>
 
 <template>
-    <main class="h-full w-full flex items-center justify-center dark:bg-gray-700">
-        <div class="w-[70%] md:w-[30%] bg-white rounded-lg shadow dark:border  dark:bg-gray-800 dark:border-gray-700">
-            <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+    <div class="w-full flex items-center justify-center">
+        <div class="bg-white w-[70%] md:w-[40%] rounded-lg shadow dark:border dark:bg-gray-800 dark:border-gray-700">
+            <div class="p-6 space-y-4 md:space-y-6 sm:p-8 ">
                 <h1
                     class="text-xl text-center font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                     Login
@@ -64,5 +64,5 @@ async function submit(event: Event) {
                 </form>
             </div>
         </div>
-    </main>
+    </div>
 </template>

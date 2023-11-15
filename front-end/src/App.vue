@@ -2,7 +2,7 @@
 import Notifications from './components/Notifications.vue';
 import { Ref, ref } from 'vue';
 import { useSessionStore } from './store';
-import UserDash from './views/user.views/UserDash.vue';
+import ReaderDrawer from './views/user.views/ReaderDrawer.vue';
 import { storeToRefs } from 'pinia';
 
 let store = useSessionStore()
@@ -12,7 +12,9 @@ const sessionExpired: Ref<boolean> = ref(exp.value < Math.floor(Date.now() / 100
 </script>
 
 <template>
-  <RouterView v-show="sessionExpired" />
-  <UserDash v-show="!sessionExpired && store.role == 'READER'" />
-  <Notifications />
+   <ReaderDrawer class="absolute" v-show="!sessionExpired && store.role == 'READER'" />
+    <div class="h-screen flex justify-center px-7 pt-20 -z-20 dark:bg-gray-600">
+      <RouterView class="md:w-[80%] w-full"/>
+    </div>
+    <Notifications />
 </template>

@@ -11,9 +11,19 @@ export default class UserRoute {
 
   private configureRoutes(): void {
     this.router = Router();
+    this.router.post("/verify_token", Access.validation);
     this.router.post("/register", this.controller.register);
     this.router.post("/login", this.controller.login);
-    this.router.get("/all",Access.verify(Roles.Admin), this.controller.getAllUsers);
+    this.router.get(
+      "/all",
+      Access.verify(Roles.Admin),
+      this.controller.getAllUsers
+    );
     this.router.get("/history/:userId", this.controller.getUserHistory);
+    this.router.post(
+      "/cancel",
+      Access.verify(Roles.Reader || Roles.Admin),
+      this.controller.cancelRequest
+    );
   }
 }

@@ -28,7 +28,8 @@ export enum BorrowingStatus {
   Approved = "APPROVED",
   ToReturn = "TO RETURN",
   OnHold = "ON HOLD",
-  Returned = "RETURNED"
+  Returned = "RETURNED",
+  Canceled = "CANCELED"
 }
 
 export enum BookState {

@@ -6,11 +6,11 @@ const emit = defineEmits()
 defineProps<{book: Book}>()
 
 function bookClicked(book: Book) {
-    emit("selected:book", book._id)
+    emit("selected:book", book)
 }
 
 function requestBorrow(book: Book) {
-    emit("borrow:book", book._id)
+    emit("borrow:book", book)
 }
 </script>
 

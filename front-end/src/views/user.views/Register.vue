@@ -40,8 +40,8 @@ async function submit(event: Event) {
 </script>
 
 <template>
-    <main class="h-full w-full flex items-center justify-center dark:bg-gray-700">
-        <div class="w-[70%] md:w-[30%] bg-white rounded-lg shadow dark:border  dark:bg-gray-800 dark:border-gray-700">
+   <div class="w-full flex items-center justify-center">
+        <div class="bg-white w-[70%] md:w-[40%] rounded-lg shadow dark:border dark:bg-gray-800 dark:border-gray-700">
             <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
                 <h1
                     class="text-xl text-center font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
@@ -62,5 +62,5 @@ async function submit(event: Event) {
                 </form>
             </div>
         </div>
-    </main>
+    </div>
 </template>

@@ -2,7 +2,7 @@ import axios from "axios";
 import { useSessionStore } from "../store";
 
 export type Borrow = {
-  _di: string;
+  _id: string;
   bookIsbn: string;
   bookTitle: string;
   receivedState: string;
@@ -93,7 +93,7 @@ export class UserService {
 
   async getBorrows(): Promise<Array<Borrow>> {
     const session = useSessionStore();
-    const url = `${this.baseUrl}/history/${session.userId}`;
+    const url = `${this.baseUrl}/user/history/${session.userId}`;
     try {
       const result = await axios.get(url, {
         headers: {
@@ -101,7 +101,7 @@ export class UserService {
           Accept: "application/json",
         },
       });
-      return result.data;
+      return result.data.borrow;
     } catch (err) {
       if (axios.isAxiosError(err)) {
         const message: string = err?.response?.data.message;
@@ -122,6 +122,31 @@ export class UserService {
         },
       });
       return result.data as Borrow;
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const message: string = err?.response?.data.message;
+        throw Error(message);
+      }
+      throw err;
+    }
+  }
+
+  async cancelRequest(requestId: string): Promise<string> {
+    const session = useSessionStore()
+    const url = `${this.baseUrl}/user/cancel`;
+    try {
+      const result = await axios.post(
+        url,
+        { requestId: requestId },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${session.token}`,
+          },
+        }
+      );
+      return result.data;
     } catch (err) {
       if (axios.isAxiosError(err)) {
         const message: string = err?.response?.data.message;

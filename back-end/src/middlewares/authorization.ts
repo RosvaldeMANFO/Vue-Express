@@ -1,20 +1,27 @@
 import { NextFunction, Request, Response } from "express";
 import { verify, sign, JwtPayload } from "jsonwebtoken";
-import { HttpCode, RequestFailure } from "../utils/request_result";
+import {
+  HttpCode,
+  RequestFailure,
+  RequestSuccess,
+} from "../utils/request_result";
+import { Roles } from "../models/constants";
 
 export interface CustomRequest extends Request {
   token: string | JwtPayload;
 }
 
 export type Payload = {
+  email: string,
   userId: string;
-  email: string;
   role: string;
+  iat: number;
+  exp: number;
 };
 
 class Authorization {
   secret: string = `${process.env.SECRET}`;
-  verify = (requiredRole: string) => {
+  verify = (requiredRole: Roles) => {
     return (req: Request, res: Response, next: NextFunction) => {
       try {
         const token = req.header("Authorization")?.replace("Bearer ", "");
@@ -41,9 +48,20 @@ class Authorization {
     };
   };
 
-  provideToken(payload: Payload): string {
+  validation = (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const token = req.body.token;
+      const result = verify(token, this.secret);
+      res.status(HttpCode.OK).json(result);
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  provideToken(payload: {}): string {
+    const expiresInHours = 1;
     const token: string = sign(payload, this.secret, {
-      expiresIn: "1h",
+      expiresIn: Math.floor(Date.now() / 1000) + expiresInHours * 60 * 60,
     });
     return token;
   }

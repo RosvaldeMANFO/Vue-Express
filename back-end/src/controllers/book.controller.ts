@@ -38,7 +38,7 @@ export default class BookController {
   getAllBooks = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const books = await this.bookService.getAllBooks();
-      res.status(HttpCode.OK).json(books);
+      res.status(HttpCode.OK).json(books.data);
     } catch (err) {
       next(err);
     }
@@ -55,8 +55,8 @@ export default class BookController {
 
   findBooks = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const books = await this.bookService.findBook(req.body);
-      res.status(HttpCode.OK).json(books);
+      const result = await this.bookService.findBook(req.body);
+      res.status(result.httpCode).json(result.data);
     } catch (err) {
       next(err);
     }
