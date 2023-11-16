@@ -11,7 +11,7 @@ export class BookCopiesController {
   ) => {
     try {
       const result = await this.service.getAll();
-      res.status(result.httpCode).json(result);
+      res.status(result.httpCode).json(result.data);
     } catch (err) {
       next(err);
     }

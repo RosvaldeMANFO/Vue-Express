@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { IBookService } from "../services/book.service";
 import { HttpCode } from "../utils/request_result";
 import { IBookCopiesService } from "../services/book_copies.service";
+import BookCopies from "../models/book_copies.model";
 
 export default class BookController {
   constructor(
@@ -9,12 +10,24 @@ export default class BookController {
     private bookCp: IBookCopiesService
   ) {}
 
+  private validateTitle = async (req: Request): Promise<string> => {
+    const initDoc = req.query.initDoc;
+    if (initDoc === "true") {
+      return await this.bookCp.createStock(req.body.title, 1);
+    } else {
+      const copy = await BookCopies.findOne({ title: req.body.title });
+      if (!copy) {
+        throw Error(
+          "There is no stock with this title. To create new stock, you most alow it before first book registration"
+        );
+      }
+      return copy.id;
+    }
+  };
+
   createBook = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const initDoc = req.query.initDoc;
-      if (initDoc === 'true') {
-        req.body.copy = await this.bookCp.createStock(req.body.title, 1);
-      }
+      req.body.copy = await this.validateTitle(req);
       await this.bookService.registerBook(req.body);
       res
         .status(HttpCode.OK)
@@ -26,6 +39,7 @@ export default class BookController {
 
   updateBook = async (req: Request, res: Response, next: NextFunction) => {
     try {
+      req.body.copy = await this.validateTitle(req);
       await this.bookService.updateBook(req.params.bookId, req.body);
       res
         .status(HttpCode.OK)

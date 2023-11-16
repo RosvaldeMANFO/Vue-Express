@@ -18,17 +18,15 @@ export interface IBorrowingService {
 
 export class BorrowingService implements IBorrowingService {
   async createBorrowing(borrow: BorrowingInput): Promise<void> {
-    const exist = await Borrow.findOne({
+    const exists = await Borrow.find({
       userId: borrow.userId,
       bookTitle: borrow.bookTitle,
     });
-    if (
-      exist &&
-      ![
-        BorrowingStatus.Canceled.valueOf(),
-        BorrowingStatus.Returned.valueOf(),
-      ].includes(exist.borrowStatus)
-    ) {
+    const status = new Set([
+      BorrowingStatus.Canceled.valueOf(),
+      BorrowingStatus.Returned.valueOf(),
+    ]);
+    if (!exists.every((element) => status.has(element.borrowStatus))) {
       throw new RequestFailure(
         HttpCode.UNAUTHORIZED,
         "You already have a request for this book",

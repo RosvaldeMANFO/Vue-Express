@@ -17,19 +17,25 @@ const service = new BookService()
 async function submitSearch(query: string) {
    searchState.value = true
    try {
-      if (publicationDate || query.length != 0) {
-         const result = await service.searchBook(
-            {
-               title: query,
-               genre: query,
-               author: query,
-               publishingHouse: query,
-               publicationDate: publicationDate.value
-            }
-         )
-         books.value = result
-      } else {
-         books.value = await service.getAllBooks()
+      if (publicationDate.value || query.length != 0) {
+         const request = publicationDate.value ? {
+            title: query,
+            genre: query,
+            author: query,
+            publishingHouse: query,
+            publicationDate: publicationDate.value
+         } : {
+            title: query,
+            genre: query,
+            author: query,
+            publishingHouse: query,
+         }
+         const result = await service.searchBook(request)
+         if (result.length != 0) {
+            books.value = result
+         } else {
+            books.value = await service.getAllBooks()
+         }
       }
    } catch (err) {
       notify({
@@ -78,7 +84,7 @@ async function borrow(book: Book) {
 </script>
 
 <template>
-   <div class="dark:bg-gray-600 flex-col gap-3 flex items-center h-screen">
+   <div class="dark:bg-gray-600 flex-col gap-3 flex items-center h-full">
       <h1 class="dark:text-gray-100 text-4xl capitalize text-left justify-self-start self-start">Books</h1>
       <div class="w-full mb-7 flex justify-between items-center gap-3">
          <SearchBar class="grow" @submit:query="submitSearch" :state.sync="searchState" />

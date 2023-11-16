@@ -4,7 +4,7 @@ defineProps({
         type: String,
         required: true
     },
-    required:{
+    required: {
         type: Boolean,
         required: true
     },
@@ -24,15 +24,15 @@ defineProps({
         type: String,
         required: false,
     },
-    
+
 })
 </script>
 
 <template>
     <div>
         <label :for="id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-100">{{ label }}</label>
-        <input :value="value" :id="id" :type="type" :required="required"
-            @change="$emit('update:value', ($event.target as HTMLInputElement).value)" :placeholder="placeholder"
-            class="w-full px-4 py-2 border rounded-md focus:outline-none focus:border-green-300 dark:border dark:border-gray-700 dark:bg-gray-500 dark:text-gray-100 dark:placeholder:text-gray-600">
+        <textarea :value="value" :id="id" :type="type" :required="required"
+            @input="$emit('update:value', ($event.target as HTMLInputElement).value)" :placeholder="placeholder"
+            class="w-full px-4 py-2 border rounded-md focus:outline-none focus:border-green-300 dark:border dark:border-gray-700 dark:bg-gray-500 dark:text-gray-100 dark:placeholder:text-gray-600 resize-none " :rows="3"></textarea>
     </div>
 </template>

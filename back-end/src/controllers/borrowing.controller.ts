@@ -28,7 +28,7 @@ export default class BorrowController {
   getAllBorrowings = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await this.service.getAllBorrowings();
-      res.status(HttpCode.OK).json(result);
+      res.status(HttpCode.OK).json(result.data);
     } catch (err) {
       next(err);
     }
@@ -48,8 +48,8 @@ export default class BorrowController {
     next: NextFunction
   ) => {
     try {
-      const result = this.service.getBorrowingByEmail(req.params.userEmail);
-      res.status(HttpCode.OK).json(result);
+      const result = await this.service.getBorrowingByEmail(req.params.userEmail);
+      res.status(HttpCode.OK).json(result.data);
     } catch (err) {
       next(err);
     }

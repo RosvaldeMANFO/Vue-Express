@@ -35,7 +35,7 @@ export class BookService implements IBookService {
     console.log(options)
     const result = await Book.find({
       $or: options,
-    });
+    }).sort({title: 'asc'});
     return new RequestSuccess(HttpCode.OK, result, "");
   }
 
@@ -44,7 +44,7 @@ export class BookService implements IBookService {
     Object.entries(options).forEach((element) => {
       if (element[1].length != 0) {
         if (Utils.isValidDate(element[1])) {
-          const ct = new Map<string, string>([[element[0], element[1]]]);
+          const ct = new Map<string, unknown>([[element[0], new Date(element[1])]]);
           result.push(ct);
         } else {
           const ct = new Map<string, unknown>([

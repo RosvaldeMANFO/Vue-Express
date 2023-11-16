@@ -12,6 +12,15 @@ export type Borrow = {
   updatedAt: Date;
 };
 
+export type Reader = {
+  _id: string;
+  fullName: string;
+  email: string;
+  role: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export class UserService {
   private baseUrl = import.meta.env.VITE_API_BASE;
 
@@ -132,7 +141,7 @@ export class UserService {
   }
 
   async cancelRequest(requestId: string): Promise<string> {
-    const session = useSessionStore()
+    const session = useSessionStore();
     const url = `${this.baseUrl}/user/cancel`;
     try {
       const result = await axios.post(
@@ -152,6 +161,44 @@ export class UserService {
         const message: string = err?.response?.data.message;
         throw Error(message);
       }
+      throw err;
+    }
+  }
+
+  async getAllReaders(): Promise<Array<Reader>> {
+    const session = useSessionStore();
+    const url = `${this.baseUrl}/user/all`;
+    try {
+      const result = await axios.get(url, {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${session.token}`,
+        },
+      });
+      return result.data;
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const message: string = err?.response?.data.message;
+        throw Error(message);
+      }
+      throw err;
+    }
+  }
+
+  async findReader(query: {}): Promise<Array<Reader>> {
+    const session = useSessionStore();
+    const url = `${this.baseUrl}/user/find`;
+    try {
+      const result = await axios.post(url, query, {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${session.token}`,
+        },
+      });
+      return result.data;
+    } catch (err) {
       throw err;
     }
   }

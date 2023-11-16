@@ -29,7 +29,7 @@ export default class UserController {
   getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await this.service.getAllUsers();
-      res.status(result.httpCode).json(result);
+      res.status(result.httpCode).json(result.data);
     } catch (err) {
       next(err);
     }
@@ -62,4 +62,13 @@ export default class UserController {
       next(err)
     }
   }
+
+  findReader = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await this.service.findUser(req.body);
+      res.status(result.httpCode).json(result.data);
+    } catch (err) {
+      next(err);
+    }
+  };
 }

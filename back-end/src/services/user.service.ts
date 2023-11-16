@@ -16,11 +16,17 @@ interface IUserService {
   getAllUsers(): Promise<RequestSuccess<IUser[]>>;
   getUserHistory(userId: string): Promise<RequestSuccess<unknown>>;
   getUserById(userId: string): Promise<RequestSuccess<IUser>>;
+  findUser(data: {}): Promise<RequestSuccess<[]>>;
   cancelRequest(requestId: string): Promise<RequestSuccess<string>>;
 }
 
+type FindOption = {
+  email: string;
+  fullName: string;
+};
 class UserService implements IUserService {
   constructor() {}
+
   async getUserById(userId: string): Promise<RequestSuccess<IUser>> {
     const user = (await User.findById(userId)) as IUser;
     if (user == null) {
@@ -68,7 +74,7 @@ class UserService implements IUserService {
         userId: user.id,
         role: user.role,
       });
-      const payload = verify(token, Access.secret)
+      const payload = verify(token, Access.secret);
       return new RequestSuccess<unknown>(
         HttpCode.OK,
         {
@@ -99,8 +105,11 @@ class UserService implements IUserService {
       "Retrieving user history"
     );
   }
-  async cancelRequest(requestId: string): Promise<RequestSuccess<string>>{
-    await Borrowing.findByIdAndUpdate(requestId, {borrowStatus: BorrowingStatus.Canceled}).sort({
+
+  async cancelRequest(requestId: string): Promise<RequestSuccess<string>> {
+    await Borrowing.findByIdAndUpdate(requestId, {
+      borrowStatus: BorrowingStatus.Canceled,
+    }).sort({
       createdAt: 1,
     });
     return new RequestSuccess(
@@ -108,6 +117,28 @@ class UserService implements IUserService {
       "Request canceled",
       `Canceling borrow  ${requestId}`
     );
+  }
+
+  async findUser(filterOptions: FindOption): Promise<RequestSuccess<[]>> {
+    const options = this.cleanFilterOptions(filterOptions);
+    console.log(options);
+    const result = await User.find({
+      $or: options,
+    }).sort({ fullName: "asc" });
+    return new RequestSuccess(HttpCode.OK, result as [], "");
+  }
+
+  private cleanFilterOptions(options: FindOption): Map<string, unknown>[] {
+    const result: Map<string, unknown>[] = [];
+    Object.entries(options).forEach((element) => {
+      if (element[1].length != 0) {
+        const ct = new Map<string, unknown>([
+          [element[0], { $regex: new RegExp(`.*${element[1]}.*`, "i") }],
+        ]);
+        result.push(ct);
+      }
+    });
+    return result;
   }
 }
 

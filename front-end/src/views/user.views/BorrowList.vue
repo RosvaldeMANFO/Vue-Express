@@ -4,6 +4,7 @@ import { Borrow, UserService } from '../../services/User.service.js';
 import router from '../../router/index.js';
 import Button from '../../components/Button.vue';
 import { notify } from 'notiwind';
+import NothingCard from '../../components/NothingCard.vue';
 
 
 const borrows: Ref<Array<Borrow>> = ref([])
@@ -36,10 +37,10 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div v-if="borrows.length != 0" class=" whitespace-nowrap dark:bg-gray-600 h-screen">
+    <div class="dark:bg-gray-600 h-full flex flex-col">
         <h1 class="dark:text-gray-100 text-4xl capitalize">My requests</h1>
         <div v-if="borrows.length != 0" class=" mt-10 overflow-x-scroll rounded-lg dark:bg-gray-800 max-h-screen">
-            <table class="table-auto shadow-md mt-5   border-separate border-spacing-y-3">
+            <table class=" whitespace-nowrap table-auto shadow-md mt-5   border-separate border-spacing-y-3">
                 <thead class="text-left tracking-wider">
                     <tr>
                         <th class=" dark:text-gray-100  p-4">Title</th>
@@ -52,7 +53,7 @@ onMounted(async () => {
                     </tr>
                 </thead>
                 <tbody class="overflow-y-scroll">
-                    <tr :key="borrow._id" v-for="borrow in borrows" :borrow="borrow" class="">
+                    <tr :key="borrow._id" v-for="borrow in borrows" class="hover:bg-gray-500">
                         <td class="p-4 dark:text-gray-100">{{ borrow.bookTitle }}</td>
                         <td class="p-4 dark:text-gray-100">{{ borrow.borrowStatus }}</td>
                         <td class="p-4 dark:text-gray-100">{{ borrow.receivedState }}</td>
@@ -68,6 +69,7 @@ onMounted(async () => {
                 </tbody>
             </table>
         </div>
-        <NothingCard v-else message="There is no book matching to this word try again please 🥲!" />
+        <NothingCard v-else class="self-center"
+            message="You haven't yet request for a borrowing. Make one an comes back here to track it 🥲!" />
     </div>
 </template>

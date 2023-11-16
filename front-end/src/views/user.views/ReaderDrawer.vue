@@ -20,7 +20,7 @@ function logout() {
 
 <template>
     <div>
-        <div class="w-full fixed top-0 z-20 shadow-md p-3 dark:bg-gray-700">
+        <div class="w-full fixed top-0 z-20 shadow-md p-3 bg-gray-700">
             <button @click="toggleDrawer">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="white" class="h-6 w-6">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
@@ -32,7 +32,7 @@ function logout() {
             <nav class="mt-4 flex flex-col gap-5">
                 <router-link to="/catalog" @click="toggleDrawer"
                     class="flex gap-2 text-white py-2 px-4 hover:bg-gray-700 border dark:border-gray-800 rounded-md bg-gray-600"
-                    :class="{ 'dark:bg-green-300 bg-gray-400': $route.name == 'catalog' }">
+                    :class="{ 'bg-green-300': $route.name == 'catalog' }">
                     <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                         fill="none" stroke="white" viewBox="0 0 16 20">
                         <path
@@ -42,7 +42,7 @@ function logout() {
                 </router-link>
                 <router-link to="/borrow" @click="toggleDrawer"
                     class="flex gap-2 text-white py-2 px-4 hover:bg-gray-700 border dark:border-gray-800 rounded-md bg-gray-600"
-                    :class="{ 'dark:bg-green-300 bg-gray-400': $route.name == 'borrow' }">
+                    :class="{ 'bg-green-300': $route.name == 'borrow' }">
                     <svg stroke="white" class="w-6 h-6 fill-none text-gray-800 dark:text-white" aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 16">
                         <path
@@ -52,7 +52,7 @@ function logout() {
                 </router-link>
                 <button @click="logout" 
                     class="flex gap-2  text-white py-2 px-4 hover:bg-gray-700 border dark:border-gray-800 rounded-md bg-gray-600"
-                    :class="{ 'dark:bg-green-300 bg-gray-400': $route.name == 'logout' }">
+                    :class="{ 'bg-green-300 ': $route.name == 'logout' }">
                     <svg class="w-6 h-6 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                         stroke="white" fill="none" viewBox="0 0 18 16">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

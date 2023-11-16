@@ -22,8 +22,13 @@ export default class UserRoute {
     this.router.get("/history/:userId", this.controller.getUserHistory);
     this.router.post(
       "/cancel",
-      Access.verify(Roles.Reader || Roles.Admin),
+      Access.verify(Roles.Reader),
       this.controller.cancelRequest
+    );
+    this.router.post(
+      "/find",
+      Access.verify(Roles.Admin),
+      this.controller.findReader
     );
   }
 }
