@@ -1,8 +1,8 @@
 export enum CollectionName {
   Users = "users",
   Books = "books",
-  Borrows = "borrows",
-  BookCopies = "bookCopies"
+  Borrows = "borrowings",
+  BookCollection = "collections"
 }
 
 export enum Roles {

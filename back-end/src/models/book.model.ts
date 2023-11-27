@@ -2,36 +2,16 @@ import mongoose, { Schema } from "mongoose";
 import {
   BookState,
   BookStatus,
-  LiteralGender,
   CollectionName,
 } from "./constants";
-import BookCopies from "./book_copies.model";
+import { BookCollection } from "./book_collection.model";
 
 export interface IBook extends Document {
   isbn: string;
-  title: string;
-  genre: string;
-  author: string;
-  bookCover: string;
-  publicationDate: Date;
-  publishingHouse: string;
+  collectionId: string;
   status: string;
   state: string;
-  copy: string;
 }
-
-export type BookInput = {
-  isbn: string;
-  title: string;
-  genre: string;
-  author: string;
-  bookCover?: string;
-  publicationDate: Date;
-  publishingHouse: string;
-  copy: string;
-  status?: string;
-  state?: string;
-};
 
 export type FilterOption = {
   genre?: string;
@@ -48,30 +28,7 @@ const bookSchema = new Schema<IBook>(
       required: true,
       unique: true,
     },
-    title: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    genre: {
-      type: String,
-      required: true,
-      default: LiteralGender.Neutral,
-      enum: LiteralGender,
-    },
-    author: {
-      type: String,
-      required: true,
-    },
-    bookCover: {
-      type: String,
-      required: false,
-    },
-    publicationDate: {
-      type: Date,
-      required: true,
-    },
-    publishingHouse: {
+    collectionId: {
       type: String,
       required: true,
     },
@@ -85,10 +42,6 @@ const bookSchema = new Schema<IBook>(
       default: BookState.Correct,
       enum: BookState,
     },
-    copy: {
-      type: String,
-      required: true,
-    },
   },
   {
     timestamps: true,
@@ -96,8 +49,8 @@ const bookSchema = new Schema<IBook>(
 );
 
 bookSchema.pre("save", async function (next) {
-  const stock = await BookCopies.findById(this.copy);
-  if (stock == null) {
+  const collection = await BookCollection.findById(this.collectionId);
+  if (collection == null) {
     throw new Error("There is not any collection for the books of this title");
   }
   next();

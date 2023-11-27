@@ -59,9 +59,8 @@ class Authorization {
   };
 
   provideToken(payload: {}): string {
-    const expiresInHours = 1;
     const token: string = sign(payload, this.secret, {
-      expiresIn: Math.floor(Date.now() / 1000) + expiresInHours * 60 * 60,
+      expiresIn: Math.floor(Date.now() / 1000) + 60 * 60,
     });
     return token;
   }

@@ -1,37 +1,34 @@
 import { NextFunction, Request, Response } from "express";
 import { IBookService } from "../services/book.service";
 import { HttpCode } from "../utils/request_result";
-import { IBookCopiesService } from "../services/book_copies.service";
-import BookCopies from "../models/book_copies.model";
+import { IBookCollectionService } from "../services/book_collection.service";
+import Book, {
+  BookCollection,
+  IBookCollection,
+} from "../models/book_collection.model";
+import { IBook } from "../models/book.model";
 
 export default class BookController {
   constructor(
     private bookService: IBookService,
-    private bookCp: IBookCopiesService
+    private collectionService: IBookCollectionService
   ) {}
 
-  private validateTitle = async (req: Request): Promise<string> => {
-    const initDoc = req.query.initDoc;
-    if (initDoc === "true") {
-      return await this.bookCp.createStock(req.body.title, 1);
-    } else {
-      const copy = await BookCopies.findOne({ title: req.body.title });
-      if (!copy) {
-        throw Error(
-          "There is no stock with this title. To create new stock, you most alow it before first book registration"
-        );
-      }
-      return copy.id;
+  getBookById = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const book = await this.bookService.getBookById(req.params.bookId);
+      console.log(JSON.stringify(book))
+      res.status(HttpCode.OK).json(book.data);
+    } catch (err) {
+      next(err);
     }
   };
 
   createBook = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      req.body.copy = await this.validateTitle(req);
-      await this.bookService.registerBook(req.body);
-      res
-        .status(HttpCode.OK)
-        .json({ message: `Book ${req.body.isbn} registered` });
+      const book = await this.validateCollection(req);
+      await this.bookService.registerBook(book);
+      res.status(HttpCode.OK).json({ message: `Book ${book.isbn} registered` });
     } catch (err) {
       next(err);
     }
@@ -39,19 +36,17 @@ export default class BookController {
 
   updateBook = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      req.body.copy = await this.validateTitle(req);
-      await this.bookService.updateBook(req.params.bookId, req.body);
-      res
-        .status(HttpCode.OK)
-        .json({ message: `Book ${req.body.isbn} updated` });
+      const book = await this.validateCollection(req);
+      await this.bookService.updateBook(req.params.bookId, book);
+      res.status(HttpCode.OK).json({ message: `Book ${book.isbn} updated` });
     } catch (err) {
       next(err);
     }
   };
 
-  getAllBooks = async (req: Request, res: Response, next: NextFunction) => {
+  getAllBook = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const books = await this.bookService.getAllBooks();
+      const books = await this.bookService.getAllBook();
       res.status(HttpCode.OK).json(books.data);
     } catch (err) {
       next(err);
@@ -67,12 +62,35 @@ export default class BookController {
     }
   };
 
-  findBooks = async (req: Request, res: Response, next: NextFunction) => {
+  findBookByISBN = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const result = await this.bookService.findBook(req.body);
+      const result = await this.bookService.findBookByISBN(req.body.isbn);
       res.status(result.httpCode).json(result.data);
     } catch (err) {
       next(err);
+    }
+  };
+
+  private validateCollection = async (req: Request): Promise<IBook> => {
+    const initCollection = req.query.initCollection;
+    if (initCollection === "true") {
+      let data: IBook = { ...req.body.book };
+      data.collectionId = await this.collectionService.crateCollection({
+        ...req.body.collection,
+      });
+      return data;
+    } else {
+      const collection = await BookCollection.findOne({
+        title: req.body.collection.title,
+      });
+      if (!collection) {
+        throw Error(
+          "There is no collection with this title. You need to create one collection with this title before continue"
+        );
+      }
+      let data: IBook = { ...req.body.book };
+      data.collectionId = collection.id;
+      return data;
     }
   };
 }

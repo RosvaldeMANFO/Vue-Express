@@ -14,7 +14,8 @@ export default class BookRoute {
     this.router.post("/create", Access.verify(Roles.Admin), this.controller.createBook);
     this.router.put("/:bookId", Access.verify(Roles.Admin), this.controller.updateBook);
     this.router.delete("/:bookId", Access.verify(Roles.Admin), this.controller.deleteBook);
-    this.router.get("/all", this.controller.getAllBooks);
-    this.router.post("/find", this.controller.findBooks);
+    this.router.get("/all", this.controller.getAllBook);
+    this.router.get("/:bookId", this.controller.getBookById);
+    this.router.post("/find", this.controller.findBookByISBN);
   }
 }

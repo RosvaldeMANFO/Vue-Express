@@ -27,4 +27,24 @@ export default class Utils {
     const pattern = /^[a-z0-9A-Z]+@[a-z]+\.[a-z]{2,3}$/
     return pattern.test(value)
   }
+
+  static cleanFilterOptions(options: Map<string, unknown>): Map<string, unknown>[] {
+    const result: Map<string, unknown>[] = [];
+    Object.entries(options).forEach((element) => {
+      if (element[1].length != 0) {
+        if (Utils.isValidDate(element[1])) {
+          const ct = new Map<string, unknown>([
+            [element[0], new Date(element[1])],
+          ]);
+          result.push(ct);
+        } else {
+          const ct = new Map<string, unknown>([
+            [element[0], { $regex: new RegExp(`.*${element[1]}.*`, "i") }],
+          ]);
+          result.push(ct);
+        }
+      }
+    });
+    return result;
+  }
 }

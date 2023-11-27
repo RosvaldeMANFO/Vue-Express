@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useSessionStore } from "../store";
+import { BookCollection } from "./Collection.service";
 
 export enum LiteralGender {
   Narrative = "NARRATIVE",
@@ -11,48 +12,38 @@ export enum LiteralGender {
 }
 
 export type Book = {
-  _id: string;
+  _id?: string;
   isbn: string;
-  title: string;
-  genre: string;
-  author: string;
-  bookCover?: string;
-  publicationDate: Date;
-  publishingHouse: string;
-  copy: string;
-  status: string;
-  state: string;
-  createAt: Date;
-  updatedAt: Date;
+  collectionId?: string;
+  status?: string;
+  state?: string;
+  createAt?: Date;
+  updatedAt?: Date;
 };
 
-export type BookCopy = {
-  _id: string;
-  title: string;
-  quantity: number;
-};
-
-export type BorrowInput = {
-  userId: string;
-  bookId: string;
-  userEmail: string;
-  bookIsbn: string;
-  bookTitle: string;
-};
-
-export type BookInput = {
-  isbn: string;
-  title: string;
-  genre: string;
-  author: string;
-  publicationDate: Date;
-  publishingHouse: string;
+export type BookMapped = {
+  book: Book,
+  collection: BookCollection
 };
 
 export class BookService {
   private baseUrl = import.meta.env.VITE_API_BASE;
 
-  async getAllBooks(): Promise<Array<Book>> {
+  async getBookById(bookId: string): Promise<BookMapped> {
+    const url = `${this.baseUrl}/book/${bookId}`;
+    try {
+      const result = await axios.get(url);
+      return result.data;
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const message: string = err?.response?.data.message;
+        throw Error(message);
+      }
+      throw err;
+    }
+  }
+
+  async getAllBook(): Promise<Array<BookMapped>> {
     const url = `${this.baseUrl}/book/all`;
     try {
       const result = await axios.get(url);
@@ -66,9 +57,9 @@ export class BookService {
     }
   }
 
-  async registerBook(data: BookInput, newStock: boolean) {
+  async registerBook(data: BookMapped, newCollection: boolean) {
     const session = useSessionStore();
-    const url = `${this.baseUrl}/book/create?initDoc=${newStock}`;
+    const url = `${this.baseUrl}/book/create?initCollection=${newCollection}`;
     try {
       const result = await axios.post(
         url,
@@ -81,7 +72,7 @@ export class BookService {
           },
         }
       );
-      return result.data;
+      return result.data.message;
     } catch (err) {
       if (axios.isAxiosError(err)) {
         const message: string = err?.response?.data.message;
@@ -91,9 +82,9 @@ export class BookService {
     }
   }
 
-  async updateBook(data: Book) {
+  async updateBook(data: BookMapped) {
     const session = useSessionStore();
-    const url = `${this.baseUrl}/book/${data._id}`;
+    const url = `${this.baseUrl}/book/${data.book._id}`;
     try {
       const result = await axios.put(
         url,
@@ -106,7 +97,7 @@ export class BookService {
           },
         }
       );
-      return result.data;
+      return result.data.message;
     } catch (err) {
       if (axios.isAxiosError(err)) {
         const message: string = err?.response?.data.message;
@@ -140,32 +131,11 @@ export class BookService {
     }
   }
 
-  async requestBorrow(data: BorrowInput): Promise<void> {
-    const session = useSessionStore();
-    const url = `${this.baseUrl}/borrowing/create`;
-    try {
-      const result = await axios.post(url, data, {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          Authorization: `Bearer ${session.token}`,
-        },
-      });
-      return result.data;
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        const message: string = err?.response?.data.message;
-        throw Error(message);
-      }
-      throw err;
-    }
-  }
-
-  async searchBook(data: {}): Promise<Array<Book>> {
+  async findBookByISBN(query: string): Promise<BookMapped[]> {
     const session = useSessionStore();
     const url = `${this.baseUrl}/book/find`;
     try {
-      const result = await axios.post(url, data, {
+      const result = await axios.post(url, {isbn: query}, {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
@@ -174,27 +144,6 @@ export class BookService {
       });
       return result.data;
     } catch (err) {
-      throw err;
-    }
-  }
-
-  async getAllCopies(): Promise<Array<BookCopy>> {
-    const url = `${this.baseUrl}/book_copies/all`;
-    const session = useSessionStore();
-    try {
-      const result = await axios.get(url, {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          Authorization: `Bearer ${session.token}`,
-        },
-      });
-      return result.data;
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        const message: string = err?.message;
-        throw Error(message);
-      }
       throw err;
     }
   }

@@ -6,7 +6,7 @@ import {
 import Book from "../models/book.model";
 import { BookStatus, BorrowingStatus } from "../models/constants";
 import Borrow, { BorrowingInput, IBorrowing } from "../models/borrowing.model";
-import BookCopies from "../models/book_copies.model";
+import BookCopies from "../models/book_collection.model";
 
 export interface IBorrowingService {
   createBorrowing(borrow: BorrowingInput): Promise<void>;
@@ -67,7 +67,7 @@ export class BorrowingService implements IBorrowingService {
     borrowStatus: string
   ): Promise<void> {
     const book = await Book.findById(bookId);
-    const stock = await BookCopies.findById(book?.copy);
+    const stock = await BookCopies.findById(book?.collectionId);
     const borrow = await Borrow.findById(borrowId);
     if (
       borrowStatus == BorrowingStatus.Approved &&

@@ -40,6 +40,16 @@ function logout() {
                     </svg>
                     Books
                 </router-link>
+                <router-link to="/collections" @click="toggleDrawer"
+                    class="flex gap-2 text-white py-2 px-4 hover:bg-gray-700 border dark:border-gray-800 rounded-md bg-gray-600"
+                    :class="{ 'bg-green-300': $route.name?.toString().includes('collection') }">
+                    <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                        fill="none" viewBox="0 0 20 20">
+                        <path stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2" />
+                    </svg>
+                    Collections
+                </router-link>
                 <router-link to="/readers" @click="toggleDrawer"
                     class="flex gap-2 text-white py-2 px-4 hover:bg-gray-700 border dark:border-gray-800 rounded-md bg-gray-600"
                     :class="{ 'bg-green-300': $route.name?.toString().includes('reader') }">

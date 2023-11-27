@@ -5,8 +5,8 @@ export type Payload = {
     email: string,
     userId: string,
     role: string,
-    iat: 0,
-    exp: 0,
+    iat: number,
+    exp: number,
 }
 
 export const useSessionStore = defineStore("session",{
@@ -15,8 +15,8 @@ export const useSessionStore = defineStore("session",{
     email: "",
     userId: "",
     role: "",
-    iat: 0,
-    exp: 0,
+    iat: Math.floor(Date.now() / 1000),
+    exp: Math.floor(Date.now() / 1000),
   }),
 });
 
