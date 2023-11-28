@@ -31,14 +31,14 @@ export class CollectionService {
       return result.data;
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        const message: string = err?.message;
+        const message: string = err?.response?.data.message;
         throw Error(message);
       }
       throw err;
     }
   }
 
-  async createCollection(data: {}): Promise<void> {
+  async createCollection(data: {}): Promise<string> {
     const url = `${this.baseUrl}/collection/create`;
     const session = useSessionStore();
     try {
@@ -52,14 +52,14 @@ export class CollectionService {
       return result.data.message;
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        const message: string = err?.message;
+        const message: string = err?.response?.data.message;
         throw Error(message);
       }
       throw err;
     }
   }
 
-  async updateCollection(collection: BookCollection): Promise<void> {
+  async updateCollection(collection: BookCollection): Promise<string> {
     const url = `${this.baseUrl}/collection/${collection._id}`;
     const session = useSessionStore();
     try {
@@ -73,7 +73,7 @@ export class CollectionService {
       return result.data.message;
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        const message: string = err?.message;
+        const message: string = err?.response?.data.message;
         throw Error(message);
       }
       throw err;
@@ -94,7 +94,7 @@ export class CollectionService {
       return result.data.message;
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        const message: string = err?.message;
+        const message: string = err?.response?.data.message;
         throw Error(message);
       }
       throw err;
@@ -107,7 +107,7 @@ export class CollectionService {
     try {
       const result = await axios.post(
         url,
-        { isbn: query },
+        query,
         {
           headers: {
             "Content-Type": "application/json",

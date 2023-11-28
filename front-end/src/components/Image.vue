@@ -54,6 +54,6 @@ function onClearImage(){
                 <img :src="image" alt="Photo" class="w-full h-64 border-2 rounded-lg bg-cover"/>
             </div>
         </div>
-        <span v-if="image.length != 0 && !disabled"  class="text-end text-blue-300 cursor-pointer" @click="onClearImage">Clear</span>
+        <span v-if="image.length != 0 && !disabled"  class="text-end text-blue-300 cursor-pointer -mt-3" @click="onClearImage">Clear</span>
     </div>
 </template>

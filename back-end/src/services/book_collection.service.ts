@@ -1,4 +1,4 @@
-import BookCopies, {
+import {
   BookCollection,
   IBookCollection,
 } from "../models/book_collection.model";
@@ -6,7 +6,7 @@ import { HttpCode, RequestSuccess } from "../utils/request_result";
 import Utils from "../utils/utils";
 
 export interface IBookCollectionService {
-  crateCollection(collection: IBookCollection): Promise<string>;
+  createCollection(collection: IBookCollection): Promise<string>;
   updateCollection(
     collectionId: string,
     collection: IBookCollection
@@ -22,20 +22,20 @@ export interface IBookCollectionService {
 }
 
 export class BookCollectionService implements IBookCollectionService {
-  async crateCollection(collection: IBookCollection): Promise<string> {
-    const stock = await BookCopies.create(collection);
-    return stock._id.toString();
+  async createCollection(collection: IBookCollection): Promise<string> {
+    const result = await BookCollection.create(collection);
+    return result._id.toString();
   }
 
   async updateCollection(
     collectionId: string,
     collection: IBookCollection
   ): Promise<void> {
-    await BookCopies.findByIdAndUpdate(collectionId, { collection });
+    await BookCollection.findByIdAndUpdate(collectionId, collection);
   }
 
   async getAllCollection(): Promise<RequestSuccess<IBookCollection[]>> {
-    const result = await BookCopies.find();
+    const result = await BookCollection.find();
     return new RequestSuccess(
       HttpCode.OK,
       result,
@@ -46,7 +46,7 @@ export class BookCollectionService implements IBookCollectionService {
   async getCollectionById(
     collectionId: string
   ): Promise<RequestSuccess<IBookCollection>> {
-    const result = await BookCopies.findById(collectionId);
+    const result = await BookCollection.findById(collectionId);
     if (result == null) {
       throw new Error("Collection not found");
     }
@@ -58,13 +58,14 @@ export class BookCollectionService implements IBookCollectionService {
   }
 
   async deleteCollection(collectionId: string): Promise<void> {
-    await BookCopies.findByIdAndDelete(collectionId);
+    await BookCollection.findByIdAndDelete(collectionId);
   }
 
   async findCollection(
     filterOptions: Map<string, unknown>
   ): Promise<RequestSuccess<IBookCollection[]>> {
     const options = Utils.cleanFilterOptions(filterOptions);
+    console.log(options)
     const result = await BookCollection.find({ $or: options });
     return new RequestSuccess(HttpCode.OK, result, "");
   }

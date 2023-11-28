@@ -11,8 +11,10 @@ export class BookCollectionController {
     next: NextFunction
   ) => {
     try {
-      const result = await this.service.crateCollection(req.body);
-      res.status(HttpCode.OK).json(result);
+      const result = await this.service.createCollection(req.body);
+      res
+        .status(HttpCode.OK)
+        .json({ message: `Collection ${result} created successfully` });
     } catch (err) {
       next(err);
     }
@@ -24,11 +26,12 @@ export class BookCollectionController {
     next: NextFunction
   ) => {
     try {
-      const result = await this.service.updateCollection(
-        req.params.collectionId,
-        req.body
-      );
-      res.status(HttpCode.OK).json(result);
+      await this.service.updateCollection(req.params.collectionId, req.body);
+      res
+        .status(HttpCode.OK)
+        .json({
+          message: `Collection ${req.params.collectionId} updated successfully`,
+        });
     } catch (err) {
       next(err);
     }
@@ -53,13 +56,8 @@ export class BookCollectionController {
     next: NextFunction
   ) => {
     try {
-      const result = await this.service.getCollectionById(
-        req.params.collectionId
-      );
-      if (result != null && result?.data?.quantity != 0) {
-        throw new Error("This collection still contains books");
-      }
       await this.service.deleteCollection(req.params.collectionId);
+      res.status(HttpCode.OK).json({message: `Collection ${req.params.collectionId} deleted successfully`})
     } catch (err) {
       next(err);
     }

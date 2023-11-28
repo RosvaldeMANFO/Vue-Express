@@ -1,19 +1,26 @@
 import axios from "axios";
 import { useSessionStore } from "../store";
 
-
-
 export type BorrowInput = {
-    userId: string;
-    bookId: string;
-    userEmail: string;
-    bookIsbn: string;
-    bookTitle: string;
-  };
+  userId: string;
+  bookId: string;
+  collectionId: string;
+  userEmail: string;
+  bookIsbn: string;
+  bookTitle: string;
+};
 
-export class BorrowingService{
-    private baseUrl = import.meta.env.VITE_API_BASE;
-    
+export enum BorrowingStatus {
+  Approved = "APPROVED",
+  ToReturn = "TO RETURN",
+  OnHold = "ON HOLD",
+  Returned = "RETURNED",
+  Canceled = "CANCELED"
+}
+
+export class BorrowingService {
+  private baseUrl = import.meta.env.VITE_API_BASE;
+
   async requestBorrow(data: BorrowInput): Promise<void> {
     const session = useSessionStore();
     const url = `${this.baseUrl}/borrowing/create`;

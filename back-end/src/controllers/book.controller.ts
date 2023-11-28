@@ -75,7 +75,7 @@ export default class BookController {
     const initCollection = req.query.initCollection;
     if (initCollection === "true") {
       let data: IBook = { ...req.body.book };
-      data.collectionId = await this.collectionService.crateCollection({
+      data.collectionId = await this.collectionService.createCollection({
         ...req.body.collection,
       });
       return data;

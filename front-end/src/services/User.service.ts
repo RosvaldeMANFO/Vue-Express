@@ -100,7 +100,7 @@ export class UserService {
     }
   }
 
-  async getBorrows(): Promise<Array<Borrow>> {
+  async getAllRequest(): Promise<Array<Borrow>> {
     const session = useSessionStore();
     const url = `${this.baseUrl}/user/history/${session.userId}`;
     try {
@@ -120,7 +120,7 @@ export class UserService {
     }
   }
 
-  async requestBorrow(bookId: string) {
+  async sendRequest(bookId: string) {
     const session = useSessionStore();
     const url = `${this.baseUrl}/history/${session.userId}`;
     try {
@@ -165,7 +165,7 @@ export class UserService {
     }
   }
 
-  async getAllReaders(): Promise<Array<Reader>> {
+  async getAllReader(): Promise<Array<Reader>> {
     const session = useSessionStore();
     const url = `${this.baseUrl}/user/all`;
     try {

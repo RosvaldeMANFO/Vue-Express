@@ -40,7 +40,7 @@ function formatDate(date: Date) {
 
 <template>
     <div>
-        <label :for="id" class="block mb-2 text-sm font-medium text-gray-900">{{ label }}</label>
+        <label :for="id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-100">{{ label }}</label>
         <div class="w-full">
             <input :id="id" type="date" @change="dateChange" :required="required" :value="formatDate(value)"
                 placeholder="Select a date " :disabled="disabled"

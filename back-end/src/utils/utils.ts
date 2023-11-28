@@ -33,8 +33,9 @@ export default class Utils {
     Object.entries(options).forEach((element) => {
       if (element[1].length != 0) {
         if (Utils.isValidDate(element[1])) {
+          const date = new Date(element[1]).setHours(0, 0, 0, 0)
           const ct = new Map<string, unknown>([
-            [element[0], new Date(element[1])],
+            [element[0], new Date(date)],
           ]);
           result.push(ct);
         } else {

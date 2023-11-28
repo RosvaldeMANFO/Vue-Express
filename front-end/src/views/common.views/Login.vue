@@ -6,6 +6,7 @@ import Button from '../../components/Button.vue'
 import { notify } from 'notiwind';
 import router from '../../router';
 import { Payload, useSessionStore } from '../../store';
+import PasswordInput from '../../components/PasswordInput.vue';
 
 
 const store = useSessionStore()
@@ -52,10 +53,9 @@ async function submit(event: Event) {
                     Login
                 </h1>
                 <form class="space-y-4 md:space-y-6" v-on:submit="submit">
-                    <TextEntry id="fullName" label="Your email" :value.sync="data.email" type="email"
+                    <TextEntry id="email" label="Your email" :value.sync="data.email" type="email"
                         placeholder="name@company.com" :required="true" @update:value="(value) => data.email = value" />
-                    <TextEntry id="email" label="Password" :value.sync="data.password" type="password"
-                        placeholder="••••••••" :required="true" @update:value="(value) => data.password = value" />
+                    <PasswordInput :value.sync="data.password" @update:value="(value) => data.password = value" />
                     <Button label="Login" :state.sync="state" type="submit" />
                     <p class="text-sm font-light text-gray-500 dark:text-gray-400 text-center">
                         Don’t have an account yet? <a href="#" @click="router.push({ name: 'register' })"

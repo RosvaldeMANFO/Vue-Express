@@ -6,7 +6,7 @@ import {
 import Book from "../models/book.model";
 import { BookStatus, BorrowingStatus } from "../models/constants";
 import Borrow, { BorrowingInput, IBorrowing } from "../models/borrowing.model";
-import BookCopies from "../models/book_collection.model";
+import BookCollection from "../models/book_collection.model";
 
 export interface IBorrowingService {
   createBorrowing(borrow: BorrowingInput): Promise<void>;
@@ -17,22 +17,8 @@ export interface IBorrowingService {
 }
 
 export class BorrowingService implements IBorrowingService {
+
   async createBorrowing(borrow: BorrowingInput): Promise<void> {
-    const exists = await Borrow.find({
-      userId: borrow.userId,
-      bookTitle: borrow.bookTitle,
-    });
-    const status = new Set([
-      BorrowingStatus.Canceled.valueOf(),
-      BorrowingStatus.Returned.valueOf(),
-    ]);
-    if (!exists.every((element) => status.has(element.borrowStatus))) {
-      throw new RequestFailure(
-        HttpCode.UNAUTHORIZED,
-        "You already have a request for this book",
-        "You can not emit multiple request fo the same book"
-      );
-    }
     await Borrow.create(borrow);
   }
 
@@ -67,13 +53,13 @@ export class BorrowingService implements IBorrowingService {
     borrowStatus: string
   ): Promise<void> {
     const book = await Book.findById(bookId);
-    const stock = await BookCopies.findById(book?.collectionId);
+    const stock = await BookCollection.findById(book?.collectionId);
     const borrow = await Borrow.findById(borrowId);
     if (
       borrowStatus == BorrowingStatus.Approved &&
       borrow?.borrowStatus != BorrowingStatus.Approved
     ) {
-      await BookCopies.findByIdAndUpdate(stock!.id, {
+      await BookCollection.findByIdAndUpdate(stock!.id, {
         quantity: stock!.quantity - 1,
       });
       await Book.findByIdAndUpdate(bookId, {
@@ -87,7 +73,7 @@ export class BorrowingService implements IBorrowingService {
       borrowStatus == BorrowingStatus.Returned &&
       borrow?.borrowStatus != BorrowingStatus.Returned
     ) {
-      await BookCopies.findByIdAndUpdate(stock!.id, {
+      await BookCollection.findByIdAndUpdate(stock!.id, {
         quantity: stock!.quantity + 1,
       });
       await Book.findByIdAndUpdate(bookId, {

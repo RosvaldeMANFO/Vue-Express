@@ -1,4 +1,4 @@
-import { Types, Document, isObjectIdOrHexString } from "mongoose";
+import { Types, Document } from "mongoose";
 import Book, { FilterOption, IBook } from "../models/book.model";
 import BookCollection, {
   IBookCollection,
@@ -102,13 +102,11 @@ export class BookService implements IBookService {
   }
 
   private async bindCollection(
-    books: Array<IBook>,
-    collections: Array<
-      Document<unknown, {}, IBookCollection> &
-        IBookCollection & {
-          _id: Types.ObjectId;
-        }
-    >
+    books: IBook[],
+    collections: (Document<unknown, {}, IBookCollection> &
+      IBookCollection & {
+        _id: Types.ObjectId;
+      })[]
   ): Promise<Array<OutPutBook>> {
     let result: Array<OutPutBook> = [];
     books.forEach((element) => {

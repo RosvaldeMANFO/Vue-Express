@@ -1,8 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import LoginVue from "../views/common.views/Login.vue";
 import RegisterVue from "../views/user.views/Register.vue";
-import BookListVue from "../views/user.views/BookList.vue";
-import BorrowListVue from "../views/user.views/BorrowList.vue";
+import CataLogVue from "../views/user.views/Catalog.vue";
 import OnboardingVue from "../views/common.views/Onboarding.vue";
 import ErrorVue from "../views/common.views/Error.vue";
 import { useSessionStore } from "../store";
@@ -12,6 +11,7 @@ import BookRegistrationVue from "../views/admin.views/BookRegistration.vue";
 import ReadersVue from "../views/admin.views/Readers.vue";
 import RequestVue from "../views/admin.views/Requests.vue";
 import ReaderHistoryVue from "../views/admin.views/ReaderHistory.vue";
+import BorrowingRequest from "../views/user.views/BorrowingRequest.vue"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -64,12 +64,12 @@ const router = createRouter({
     {
       path: "/catalog",
       name: "catalog",
-      component: BookListVue,
+      component: CataLogVue,
     },
     {
       path: "/borrow",
       name: "borrow",
-      component: BorrowListVue,
+      component: BorrowingRequest,
     },
     {
       path: "/login",

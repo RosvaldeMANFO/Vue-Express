@@ -114,7 +114,7 @@ class UserService implements IUserService {
     });
     return new RequestSuccess(
       HttpCode.OK,
-      "Request canceled",
+      `Request ${requestId} canceled`,
       `Canceling borrow  ${requestId}`
     );
   }

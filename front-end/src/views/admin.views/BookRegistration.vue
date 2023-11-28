@@ -139,7 +139,7 @@ onMounted(() => {
                         placeholder="Enter the book ISBN, to add more than one copy, you can separate them by a comma"
                         :required="true" @update:value="(value: string) => data.book.isbn = value" />
                     <SelectOption :value.sync="data.collection.genre" :options="Object.values(LiteralGender)" id="gender"
-                        label="Literal gender" placeholder="Select a gender" :disabled="disableField"
+                        label="Literal gender" placeholder="Select a gender" :disabled="disableField" :required="true"
                         @update:value="value => data.collection.genre = value" />
                     <TextEntry id="author" label="Author" :value.sync="data.collection.author" type="text"
                         placeholder="Enter or chose a title" :required="true" :disabled="disableField"

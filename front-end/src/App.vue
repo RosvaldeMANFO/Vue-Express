@@ -35,8 +35,8 @@ onMounted(() => {
 <template>
   <ReaderDrawer class="absolute z-20" v-if=" exp > Math.floor(Date.now() / 1000) && store.role == 'READER'" />
   <AdminDrawer class="absolute z-20" v-if="exp > Math.floor(Date.now() / 1000) && store.role == 'ADMIN'" />
-  <div class="h-full overflow-auto flex justify-center px-7 pt-20 -z-20 dark:bg-gray-600 md:px-2 w-full">
-    <RouterView />
+  <div class="h-screen flex justify-center px-7 pt-20 -z-20 dark:bg-gray-600 overflow-y-auto">
+    <RouterView class="md:w-[80%] w-full " />
   </div>
   <Notifications />
 </template>

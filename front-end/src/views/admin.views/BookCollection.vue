@@ -10,6 +10,7 @@ import TextEntry from '../../components/TextEntry.vue';
 import DatePicker from '../../components/DatePicker.vue';
 import SelectOption from '../../components/SelectOption.vue';
 import Image from '../../components/Image.vue';
+import Badge from '../../components/Badge.vue';
 
 const createNew: Ref<boolean> = ref(false)
 const state: Ref<boolean> = ref(false)
@@ -24,7 +25,7 @@ const data: Ref<BookCollection> = ref({
     publishingHouse: ""
 })
 
-async function getAllBook() {
+async function getAllCollection() {
     try {
         collections.value = await service.getAllCollection()
     } catch (err) {
@@ -35,10 +36,43 @@ async function getAllBook() {
         }, 4000)
     }
 }
+
 async function deleteCollection(collection: BookCollection) {
     try {
-        const result = await service.deleteCollection(collection._id!!)
-        getAllBook()
+        const result = await service.deleteCollection(collection._id!)
+        notify({
+            group: "top",
+            title: "Success",
+            text: result
+        }, 4000)
+        await getAllCollection()
+    } catch (err) {
+        notify({
+            group: "bottom",
+            title: "Error",
+            text: (err as Error).message
+        }, 4000)
+    }
+}
+
+async function updateCollection(): Promise<string> {
+    return await service.updateCollection(data.value)
+}
+async function createCollection(): Promise<string> {
+    return await service.createCollection(data.value)
+}
+
+async function submitCreateOrUpdate(event: Event) {
+    event.preventDefault()
+    let result: string
+    try {
+        if (data.value._id) {
+            result = await updateCollection()
+        } else {
+            result = await createCollection()
+        }
+        await getAllCollection()
+        resetForm()
         notify({
             group: "top",
             title: "Success",
@@ -53,16 +87,16 @@ async function deleteCollection(collection: BookCollection) {
     }
 }
 
-async function updateCollection() {
-    await service.updateCollection(data.value)
-}
-async function createCollection() {
-    await service.createCollection(data.value)
-}
-
-async function submitSearch(query: string) {
+async function submitSearch(value: string) {
     searchState.value = true
     try {
+        const query = {
+            title : value,
+            author: value,
+            publishingHouse: value,
+            genre: value,
+            publicationDate: value
+        } 
         const result = await service.findCollection(query)
         collections.value = result
     } catch (err) {
@@ -75,11 +109,6 @@ async function submitSearch(query: string) {
         searchState.value = false
     }
 }
-
-async function submitCreateOrUpdate() {
-
-}
-
 
 async function resetForm() {
     createNew.value = true
@@ -96,7 +125,7 @@ async function resetForm() {
 }
 
 onMounted(async () => {
-    getAllBook()
+    getAllCollection()
 })
 
 </script>
@@ -105,16 +134,11 @@ onMounted(async () => {
     <div class=" dark:bg-gray-600 h-full flex flex-col gap-7">
         <h1 class="dark:text-gray-100 text-4xl capitalize">Collections</h1>
         <div class="flex justify-center gap-3 w-full items-center self-end">
-            <SearchBar placeholder="ISBN" class="grow" @submit:query="submitSearch" :state.sync="searchState"
-                @clear:query="getAllBook" />
-            <span class="whitespace-nowrap w-fit h-fit p-1.5 text-gray-100 text-xl bg-slate-500 rounded-md shadow-sm">
-                {{ collections.length }} Title(s)</span>
-            <span v-on:click="resetForm"
-                class="cursor-pointer whitespace-nowrap w-fit h-fit p-1.5 text-gray-100 p-auto text-center text-xl bg-green-300 hover:bg-green-400 rounded-md shadow-sm">Add
-                + </span>
+            <SearchBar class="grow" @submit:query="submitSearch" :state.sync="searchState" @clear:query="getAllCollection" :placeholder="'Title, Author, Publishing house/date(YYYY-MM-dd)'"/>
+            <Badge :label="`${ collections.length } Title(s)`" class="whitespace-nowrap w-fit h-fit p-1.5 text-gray-100 text-xl bg-slate-500 hover:bg-slate-500 cursor-default" />
         </div>
         <div class="w-full flex md:flex-row justify-start gap-3 flex-col">
-            <div class="grow-0">
+            <div class="grow-1">
                 <div v-if="collections.length != 0"
                     class=" whitespace-nowrap overflow-x-scroll rounded-lg dark:bg-gray-800 max-h-screen w-full">
                     <table class="table-auto shadow-md  border-separate border-spacing-y-0 w-full">
@@ -124,13 +148,19 @@ onMounted(async () => {
                                 <th class=" dark:text-gray-100  p-4">Author</th>
                                 <th class=" dark:text-gray-100  p-4">NB Copy</th>
                                 <th class=" dark:text-gray-100  p-4"></th>
+                                <th class=" dark:text-gray-100  p-4"></th>
                             </tr>
                         </thead>
                         <tbody class="overflow-y-scroll">
-                            <tr :key="collection._id" v-for="collection in collections" class="hover:bg-gray-500">
+                            <tr :key="collection._id" v-for="collection in collections"
+                                class="hover:bg-gray-500">
                                 <td class="p-4 dark:text-gray-100">{{ collection.title }}</td>
                                 <td class="p-4 dark:text-gray-100">{{ collection.author }}</td>
                                 <td class="p-4 dark:text-gray-100">{{ collection.quantity }}</td>
+                                <td class="p-4 dark:text-gray-100">
+                                    <Button @click="data = collection" :state="false" label="update"
+                                        type="button" class="bg-cyan-300 hover:bg-cyan-400" />
+                                </td>
                                 <td class="p-4 dark:text-gray-100">
                                     <Button @click="deleteCollection(collection)" :state="false" label="delete"
                                         type="button" class="bg-red-300 hover:bg-red-400" />
@@ -143,15 +173,17 @@ onMounted(async () => {
                     message="There is no book in the library. You can add them by clicking on create button 🥲!" />
             </div>
 
-            <div class="p-3 whitespace-nowrap overflow-x-scroll rounded-lg dark:bg-gray-800 max-h-screen w-full">
-                <form class=" flex w-full justify-start gap-3" v-on:submit="submitCreateOrUpdate"
-                    v-on:reset="resetForm">:
+            <div class="p-3 whitespace-nowrap overflow-x-scroll rounded-lg dark:bg-gray-800 max-h-screen w-full grow-1">
+                <form class=" flex w-full justify-start gap-3" v-on:submit="submitCreateOrUpdate($event)" v-on:reset="resetForm">:
                     <div class="flex flex-col gap-3 w-full">
+                        <TextEntry id="author" label="Title" :value.sync="data.title" type="text"
+                            placeholder="Enter a title" :required="true"
+                            @update:value="(value) => data.title = value" />
                         <SelectOption :value.sync="data.genre" :options="Object.values(LiteralGender)" id="gender"
-                            label="Literal gender" placeholder="Select a gender"
+                            label="Literal gender" placeholder="Select a gender" :required="true"
                             @update:value="value => data.genre = value" />
                         <TextEntry id="author" label="Author" :value.sync="data.author" type="text"
-                            placeholder="Enter or chose a title" :required="true"
+                            placeholder="Enter the author name" :required="true"
                             @update:value="(value) => data.author = value" />
                         <TextEntry id="publishingHouse" label="Publishing house" :value.sync="data.publishingHouse"
                             type="text" placeholder="Enter the publishing house" :required="true"

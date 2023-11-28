@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useSessionStore } from "../store";
 import { BookCollection } from "./Collection.service";
+import Utils from "../utils";
 
 export enum LiteralGender {
   Narrative = "NARRATIVE",
@@ -22,8 +23,8 @@ export type Book = {
 };
 
 export type BookMapped = {
-  book: Book,
-  collection: BookCollection
+  book: Book;
+  collection: BookCollection;
 };
 
 export class BookService {
@@ -107,20 +108,17 @@ export class BookService {
     }
   }
 
-  async deleteBook(id: string){
+  async deleteBook(id: string) {
     const session = useSessionStore();
     const url = `${this.baseUrl}/book/${id}`;
     try {
-      const result = await axios.delete(
-        url,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-            Authorization: `Bearer ${session.token}`,
-          },
-        }
-      );
+      const result = await axios.delete(url, {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${session.token}`,
+        },
+      });
       return result.data;
     } catch (err) {
       if (axios.isAxiosError(err)) {
@@ -135,16 +133,57 @@ export class BookService {
     const session = useSessionStore();
     const url = `${this.baseUrl}/book/find`;
     try {
-      const result = await axios.post(url, {isbn: query}, {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          Authorization: `Bearer ${session.token}`,
-        },
-      });
+      const result = await axios.post(
+        url,
+        { isbn: query },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${session.token}`,
+          },
+        }
+      );
       return result.data;
     } catch (err) {
       throw err;
     }
+  }
+
+  findBook(books: BookMapped[], query: string) {
+    const result: BookMapped[] = [];
+    for (let i = 0; i < books.length; i++) {
+      const add = this.iterateProperties(books[i], query);
+      if (add) {
+        alert("yes");
+        result.push(books[i]);
+      }
+    }
+    return result;
+  }
+
+  private iterateProperties(obj: any, query: string): boolean {
+    const regxp = new RegExp(`\w*${query}\w*`, "i");
+    let match = false;
+    for (const key in obj) {
+      if (typeof obj[key] === "object" && obj[key] !== null) {
+        match = this.iterateProperties(obj[key], query);
+        break;
+      } else {
+        if (Utils.isValidDate(query)) {
+          const date = new Date(query).setHours(0, 0, 0, 0);
+          if (obj[key] == new Date(date)) {
+            match = true;
+            break;
+          }
+        } else {
+          if (regxp.test(obj[key])) {
+            match = true;
+            break;
+          }
+        }
+      }
+    }
+    return match;
   }
 }

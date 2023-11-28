@@ -7,6 +7,7 @@ import { Book, BookService, BookMapped } from '../../services/Book.service';
 import router from '../../router';
 import SearchBar from "../../components/SearchBar.vue";
 import { BookCollection, CollectionService } from '../../services/Collection.service';
+import Badge from '../../components/Badge.vue';
 
 const searchState: Ref<boolean> = ref(false)
 const mappedBooks: Ref<Array<BookMapped>> = ref([])
@@ -87,11 +88,8 @@ onMounted(async () => {
         <div class="flex justify-center gap-3 w-full items-center self-end">
             <SearchBar placeholder="ISBN" class="grow" @submit:query="submitSearch" :state.sync="searchState"
                 @clear:query="getAllBook" />
-            <span class="whitespace-nowrap w-fit h-fit p-1.5 text-gray-100 text-xl bg-slate-500 rounded-md shadow-sm">
-                {{ countBook() }} book(s)</span>
-            <span v-on:click="addBook"
-                class="cursor-pointer whitespace-nowrap w-fit h-fit p-1.5 text-gray-100 p-auto text-center text-xl bg-green-300 hover:bg-green-400 rounded-md shadow-sm">Add
-                + </span>
+            <Badge :label="`${countBook()} book(s)`" class="whitespace-nowrap w-fit h-fit p-1.5 text-gray-100 text-xl bg-slate-500 hover:bg-slate-500 cursor-default shadow-sm" />
+            <Badge v-on:click="addBook"  label="Add +" />
         </div>
         <div v-if="mappedBooks.length != 0"
             class=" whitespace-nowrap overflow-x-scroll rounded-lg dark:bg-gray-800 max-h-full w-full">
@@ -119,7 +117,7 @@ onMounted(async () => {
                         <td class="p-4 dark:text-gray-100">{{ mappedBook.book.status }}</td>
                         <td class="p-4 grow-0 dark:text-gray-100">
                             <Button @click="updateBook(mappedBook.book)" :state="false" label="update" type="button"
-                                class="bg-blue-300 hover:bg-blue-400" />
+                                class="bg-cyan-300 hover:bg-cyan-400" />
                         </td>
                         <td class="p-4 grow-0 dark:text-gray-100">
                             <Button @click="deleteBook(mappedBook.book)" :state="false" label="delete" type="button"

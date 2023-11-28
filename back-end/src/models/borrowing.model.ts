@@ -11,11 +11,12 @@ import Book from "./book.model";
 export interface IBorrowing extends Document {
   userId: string;
   bookId: string;
+  collectionId: string;
   userEmail: string;
   bookIsbn: string;
   bookTitle: string;
-  receivedDate: Date;
-  returnDate: Date;
+  receivedDate?: Date;
+  returnDate?: Date;
   returnState: string;
   receivedState: string;
   borrowStatus: string;
@@ -24,6 +25,7 @@ export interface IBorrowing extends Document {
 export type BorrowingInput = {
   userId: string;
   bookId: string;
+  collectionId: string;
   userEmail: string;
   bookIsbn: string;
   bookTitle: string;
@@ -41,6 +43,11 @@ const borrowSchema = new Schema<IBorrowing>(
       ref: CollectionName.Books,
       required: true,
     },
+    collectionId: {
+      type: String,
+      ref: CollectionName.BookCollection,
+      required: true,
+    },
     userEmail: {
       type: String,
       required: true,
@@ -56,10 +63,12 @@ const borrowSchema = new Schema<IBorrowing>(
     receivedDate: {
       type: Date,
       required: false,
+      default: null,
     },
     returnDate: {
       type: Date,
       required: false,
+      default: null,
     },
     receivedState: {
       type: String,
@@ -91,7 +100,20 @@ borrowSchema.pre("save", async function (next) {
   if (book.status == BookStatus.Unavailable) {
     throw new Error("Book is not available");
   }
-  next()
+
+  const exists = await Borrowing.find({
+    userId: this.userId,
+    bookTitle: this.bookTitle,
+  });
+  const status = new Set([
+    BorrowingStatus.Canceled.valueOf(),
+    BorrowingStatus.Returned.valueOf(),
+  ]);
+  if (!exists.every((element) => status.has(element.borrowStatus))) {
+    throw new Error("You already have a request for this book");
+  }
+
+  next();
 });
 
 const Borrowing = mongoose.model(CollectionName.Borrows, borrowSchema);

@@ -11,9 +11,9 @@ defineProps({
 })
 </script>
 
-<template>
+<template >
     <button v-bind="$attrs"
-        class="hover:bg-green-400 w-full text-white bg-primary-600 flex gap-3 justify-center font-medium rounded-md text-sm px-5 py-2.5 text-center bg-green-300">
+        class="hover:bg-green-400 w-full text-white bg-primary-600 flex gap-3 justify-center font-medium rounded-md text-sm px-5 py-2.5 text-center bg-green-300 dark:border shadow-md dark:border-gray-700 ">
         {{label}}
         <svg v-if="state" width="20" height="20" fill="white" class="mr- animate-spin" viewBox="0 0 1792 1792"
             xmlns="http://www.w3.org/2000/svg">

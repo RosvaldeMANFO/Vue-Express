@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Document, Types } from "mongoose";
 import { CollectionName, LiteralGender } from "./constants";
 
 export interface IBookCollection extends Document {
@@ -12,7 +12,7 @@ export interface IBookCollection extends Document {
   defaultCover: String;
 }
 
-const bookCopiesSchema = new Schema<IBookCollection>(
+const bookCollectionSchema = new Schema<IBookCollection>(
   {
     title: {
       type: String,
@@ -52,9 +52,24 @@ const bookCopiesSchema = new Schema<IBookCollection>(
   }
 );
 
+bookCollectionSchema.pre(/\w*delete\w*/i, async  function (next) {
+  const query = (this as mongoose.Query<any, any, {}, any, "find">).getQuery()
+  const collection =  await BookCollection.findById(query['_id'])
+  if (collection?.quantity != 0) {
+    throw new Error("This collection still contains books");
+  }
+  next();
+});
+
+bookCollectionSchema.pre("save", async function (next) {
+  const date = this.publicationDate.setHours(0, 0, 0, 0);
+  this.publicationDate = new Date(date);
+  next();
+});
+
 export const BookCollection = mongoose.model(
   CollectionName.BookCollection,
-  bookCopiesSchema
+  bookCollectionSchema
 );
 
 export default BookCollection;
