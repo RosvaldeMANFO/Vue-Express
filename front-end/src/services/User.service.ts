@@ -1,16 +1,6 @@
 import axios from "axios";
 import { useSessionStore } from "../store";
-
-export type Borrow = {
-  _id: string;
-  bookIsbn: string;
-  bookTitle: string;
-  receivedState: string;
-  returnState: string;
-  borrowStatus: string;
-  createdAt: Date;
-  updatedAt: Date;
-};
+import { IRequest } from "./Request.service";
 
 export type Reader = {
   _id: string;
@@ -100,7 +90,7 @@ export class UserService {
     }
   }
 
-  async getAllRequest(): Promise<Array<Borrow>> {
+  async getAllRequest(): Promise<Array<IRequest>> {
     const session = useSessionStore();
     const url = `${this.baseUrl}/user/history/${session.userId}`;
     try {
@@ -130,7 +120,7 @@ export class UserService {
           Accept: "application/json",
         },
       });
-      return result.data as Borrow;
+      return result.data;
     } catch (err) {
       if (axios.isAxiosError(err)) {
         const message: string = err?.response?.data.message;

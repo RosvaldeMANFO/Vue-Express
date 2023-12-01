@@ -5,10 +5,10 @@ import {
 } from "../utils/request_result";
 import Utils from "../utils/utils";
 import User, { IUser, UserInput } from "../models/user.model";
-import Borrowing from "../models/borrowing.model";
+import Request from "../models/request.model";
 import { Access } from "../middlewares/authorization";
 import { verify } from "jsonwebtoken";
-import { BorrowingStatus } from "../models/constants";
+import { RequestStatus } from "../models/constants";
 
 interface IUserService {
   register(user: UserInput): Promise<void>;
@@ -93,7 +93,7 @@ class UserService implements IUserService {
 
   async getUserHistory(userId: string): Promise<RequestSuccess<unknown>> {
     const user = await User.findById(userId);
-    const borrow = await Borrowing.find({ userId: userId }).sort({
+    const borrow = await Request.find({ userId: userId }).sort({
       createdAt: 1,
     });
     return new RequestSuccess(
@@ -107,8 +107,8 @@ class UserService implements IUserService {
   }
 
   async cancelRequest(requestId: string): Promise<RequestSuccess<string>> {
-    await Borrowing.findByIdAndUpdate(requestId, {
-      borrowStatus: BorrowingStatus.Canceled,
+    await Request.findByIdAndUpdate(requestId, {
+      borrowStatus: RequestStatus.Canceled,
     }).sort({
       createdAt: 1,
     });

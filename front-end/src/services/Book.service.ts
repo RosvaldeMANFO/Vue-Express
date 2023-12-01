@@ -119,7 +119,7 @@ export class BookService {
           Authorization: `Bearer ${session.token}`,
         },
       });
-      return result.data;
+      return result.data.message;
     } catch (err) {
       if (axios.isAxiosError(err)) {
         const message: string = err?.response?.data.message;
@@ -155,7 +155,6 @@ export class BookService {
     for (let i = 0; i < books.length; i++) {
       const add = this.iterateProperties(books[i], query);
       if (add) {
-        alert("yes");
         result.push(books[i]);
       }
     }
@@ -172,7 +171,11 @@ export class BookService {
       } else {
         if (Utils.isValidDate(query)) {
           const date = new Date(query).setHours(0, 0, 0, 0);
-          if (obj[key] == new Date(date)) {
+          if (
+            Utils.isValidDate(obj[key]) &&
+            new Date(obj[key]).toLocaleDateString() ==
+              new Date(date).toLocaleDateString()
+          ) {
             match = true;
             break;
           }

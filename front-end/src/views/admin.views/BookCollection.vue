@@ -11,7 +11,9 @@ import DatePicker from '../../components/DatePicker.vue';
 import SelectOption from '../../components/SelectOption.vue';
 import Image from '../../components/Image.vue';
 import Badge from '../../components/Badge.vue';
+import Loader from '../../components/Loader.vue';
 
+const loading: Ref<boolean> = ref(false)
 const createNew: Ref<boolean> = ref(false)
 const state: Ref<boolean> = ref(false)
 const searchState: Ref<boolean> = ref(false)
@@ -27,6 +29,7 @@ const data: Ref<BookCollection> = ref({
 
 async function getAllCollection() {
     try {
+        loading.value = true
         collections.value = await service.getAllCollection()
     } catch (err) {
         notify({
@@ -34,6 +37,8 @@ async function getAllCollection() {
             title: "Error",
             text: (err as Error).message
         }, 4000)
+    } finally {
+        loading.value = false
     }
 }
 
@@ -131,7 +136,8 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div class=" dark:bg-gray-600 h-full flex flex-col gap-7">
+    <div class=" dark:bg-gray-600 h-full flex flex-col gap-7 relative">
+        <Loader :state="loading"/>
         <h1 class="dark:text-gray-100 text-4xl capitalize">Collections</h1>
         <div class="flex justify-center gap-3 w-full items-center self-end">
             <SearchBar class="grow" @submit:query="submitSearch" :state.sync="searchState" @clear:query="getAllCollection" :placeholder="'Title, Author, Publishing house/date(YYYY-MM-dd)'"/>
@@ -139,8 +145,8 @@ onMounted(async () => {
         </div>
         <div class="w-full flex md:flex-row justify-start gap-3 flex-col">
             <div class="grow-1">
-                <div v-if="collections.length != 0"
-                    class=" whitespace-nowrap overflow-x-scroll rounded-lg dark:bg-gray-800 max-h-screen w-full">
+                <div v-if="collections.length != 0 && !loading"
+                    class=" whitespace-nowrap overflow-x-scroll rounded-lg dark:bg-gray-800 max-h-screen w-full border dark:border-gray-700">
                     <table class="table-auto shadow-md  border-separate border-spacing-y-0 w-full">
                         <thead class="text-left tracking-wider sticky top-0 dark:bg-gray-900 bg-gray-500">
                             <tr>
@@ -153,7 +159,7 @@ onMounted(async () => {
                         </thead>
                         <tbody class="overflow-y-scroll">
                             <tr :key="collection._id" v-for="collection in collections"
-                                class="hover:bg-gray-500">
+                                class="dark:hover:bg-gray-400 hover:bg-gray-300">
                                 <td class="p-4 dark:text-gray-100">{{ collection.title }}</td>
                                 <td class="p-4 dark:text-gray-100">{{ collection.author }}</td>
                                 <td class="p-4 dark:text-gray-100">{{ collection.quantity }}</td>
@@ -173,8 +179,8 @@ onMounted(async () => {
                     message="There is no book in the library. You can add them by clicking on create button 🥲!" />
             </div>
 
-            <div class="p-3 whitespace-nowrap overflow-x-scroll rounded-lg dark:bg-gray-800 max-h-screen w-full grow-1">
-                <form class=" flex w-full justify-start gap-3" v-on:submit="submitCreateOrUpdate($event)" v-on:reset="resetForm">:
+            <div class="p-3 whitespace-nowrap rounded-lg dark:bg-gray-800 max-h-screen w-full grow-1 border dark:border-gray-700">
+                <form class=" flex w-full justify-start gap-3" v-on:submit="submitCreateOrUpdate($event)" v-on:reset="resetForm">
                     <div class="flex flex-col gap-3 w-full">
                         <TextEntry id="author" label="Title" :value.sync="data.title" type="text"
                             placeholder="Enter a title" :required="true"

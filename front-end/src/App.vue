@@ -9,7 +9,8 @@ import router from './router';
 
 const store = useSessionStore()
 const { exp } = storeToRefs(store)
-const sessionExpired: Ref<boolean> = ref(exp.value < Math.floor(Date.now() / 1000))
+const sessionExpired: Ref<boolean> = ref(true)
+
 function resumeSession() {
   const session = localStorage.getItem("session");
   if (session) {
@@ -33,7 +34,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <ReaderDrawer class="absolute z-20" v-if=" exp > Math.floor(Date.now() / 1000) && store.role == 'READER'" />
+  <ReaderDrawer class="absolute z-20" v-if="exp > Math.floor(Date.now() / 1000) && store.role == 'READER'" />
   <AdminDrawer class="absolute z-20" v-if="exp > Math.floor(Date.now() / 1000) && store.role == 'ADMIN'" />
   <div class="h-screen flex justify-center px-7 pt-20 -z-20 dark:bg-gray-600 overflow-y-auto">
     <RouterView class="md:w-[80%] w-full " />

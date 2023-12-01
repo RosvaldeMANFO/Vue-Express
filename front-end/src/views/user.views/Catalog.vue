@@ -2,24 +2,26 @@
 import SearchBar from "../../components/SearchBar.vue";
 import { onMounted, ref, Ref } from "vue";
 import { BookMapped, BookService } from '../../services/Book.service';
-import router from '../../router/index.js';
 import BookCard from "../../components/BookCard.vue";
 import { notify } from 'notiwind';
 import NothingCard from "../../components/NothingCard.vue";
-import { BorrowingService } from "../../services/Borrowing.service";
-import { BorrowInput } from "../../services/Borrowing.service";
+import { RequestService } from "../../services/Request.service";
+import { RequestInput } from "../../services/Request.service";
 import { useSessionStore } from "../../store";
 import { storeToRefs } from "pinia";
+import Loader from "../../components/Loader.vue";
 
+const loading: Ref<boolean> = ref(false)
 const searchState: Ref<boolean> = ref(false)
 const books: Ref<Array<BookMapped>> = ref([])
 const service = new BookService()
 const store = useSessionStore()
-const {userId, email} = storeToRefs(store)
+const { userId, email } = storeToRefs(store)
 
 async function submitSearch(query: string) {
    searchState.value = true
    try {
+      loading.value = true
       books.value = service.findBook(books.value, query)
    } catch (err) {
       notify({
@@ -28,21 +30,18 @@ async function submitSearch(query: string) {
          text: (err as Error).message
       }, 4000)
    } finally {
+      loading.value = false
       searchState.value = false
    }
 }
 
 onMounted(async () => {
-   try {
-      books.value = await service.getAllBook()
-   } catch (err) {
-      router.push({ name: "error" })
-   }
+   await getAllBook()
 })
 
 async function borrow(map: BookMapped) {
    try {
-      const data: BorrowInput = {
+      const data: RequestInput = {
          userId: userId.value,
          bookId: map.book._id!,
          collectionId: map.collection._id!,
@@ -50,8 +49,8 @@ async function borrow(map: BookMapped) {
          bookIsbn: map.book.isbn,
          bookTitle: map.collection.title,
       }
-      const borrowService = new BorrowingService()
-      await borrowService.requestBorrow(data)
+      const borrowService = new RequestService()
+      await borrowService.sendRequest(data)
       notify({
          group: "top",
          title: "Success",
@@ -66,19 +65,33 @@ async function borrow(map: BookMapped) {
    }
 }
 
-async function getAllBook(){
-   books.value = await service.getAllBook()
+async function getAllBook() {
+   try {
+      loading.value = true
+      books.value = await service.getAllBook()
+   } catch (err) {
+      notify({
+         group: "bottom",
+         title: "Error",
+         text: (err as Error).message
+      }, 4000)
+   } finally {
+      loading.value = false
+   }
 }
 </script>
 
 <template>
    <div class="dark:bg-gray-600 flex-col gap-3 flex items-center h-full">
       <h1 class="dark:text-gray-100 text-4xl capitalize text-left justify-self-start self-start">Books</h1>
-      <SearchBar class="w-full mb-7" @submit:query="submitSearch" :state.sync="searchState" @clear:query="getAllBook" placeholder="Title, Author, publishing house/date (YYYY-MM-dd)"/>
-      <div v-if="books.length != 0"
+      <SearchBar class="w-full mb-7" @submit:query="submitSearch" :state.sync="searchState" @clear:query="getAllBook"
+         placeholder="Title, Author, publishing house/date (YYYY-MM-dd)" />
+      <Loader :state="loading" />
+      <div v-if="books.length != 0 && !loading"
          class=" w-full grid grid-flow-row items-center md:grid-cols-2 xl:grid-cols-3 place-items-center gap-2">
          <BookCard v-for="book in books" :mappedBook="book" @borrow:book="borrow"></BookCard>
       </div>
-      <NothingCard v-else message="There is no book matching to this word try again please 🥲!" />
+      <NothingCard v-else-if="books.length == 0 && !loading"
+         message="There is no book matching to this word try again please 🥲!" />
    </div>
 </template>

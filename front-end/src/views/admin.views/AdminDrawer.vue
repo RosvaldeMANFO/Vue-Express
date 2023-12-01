@@ -20,14 +20,14 @@ function logout() {
 
 <template>
     <div>
-        <div class="w-full fixed top-0 z-20 shadow-md p-3 bg-gray-700">
+        <div class="w-full fixed top-0 z-20 shadow-md p-3 dar:bg-gray-700 bg-gray-500">
             <button @click="toggleDrawer">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="white" class="h-6 w-6">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
                 </svg>
             </button>
         </div>
-        <div class="mt-12 fixed h-screen inset-y-0 left-0 w-64 bg-gray-800 p-4 transition-transform transform"
+        <div class="mt-12 fixed h-screen inset-y-0 left-0 w-64 dar:bg-gray-700 p-4 transition-transform transform bg-gray-500"
             :class="{ '-translate-x-full': !drawerState }">
             <nav class="mt-4 flex flex-col gap-5">
                 <router-link to="/books" @click="toggleDrawer"

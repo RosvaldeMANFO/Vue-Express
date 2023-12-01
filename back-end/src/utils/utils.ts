@@ -48,4 +48,21 @@ export default class Utils {
     });
     return result;
   }
+
+  static isValidInput(input: string | Uint8Array | number): boolean {
+    if (typeof input === 'string') {
+      const hexStringRegex = /^[0-9a-fA-F]{24}$/;
+      if (hexStringRegex.test(input)) {
+        return true;
+      }
+    } else if (input instanceof Uint8Array) {
+      if (input.length === 12) {
+        return true;
+      }
+    } else if (typeof input === 'number' && Number.isInteger(input)) {
+      return true;
+    }
+  
+    return false;
+  }
 }

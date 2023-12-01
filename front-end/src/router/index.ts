@@ -10,7 +10,6 @@ import BookCollectionVue from "../views/admin.views/BookCollection.vue";
 import BookRegistrationVue from "../views/admin.views/BookRegistration.vue";
 import ReadersVue from "../views/admin.views/Readers.vue";
 import RequestVue from "../views/admin.views/Requests.vue";
-import ReaderHistoryVue from "../views/admin.views/ReaderHistory.vue";
 import BorrowingRequest from "../views/user.views/BorrowingRequest.vue"
 
 const router = createRouter({
@@ -52,12 +51,7 @@ const router = createRouter({
       component: ReadersVue,
     },
     {
-      path: "/reader_history/:readerId",
-      name: "reader_history",
-      component: ReaderHistoryVue,
-    },
-    {
-      path: "/requests",
+      path: "/requests/:readerId?",
       name: "requests",
       component: RequestVue,
     },
@@ -97,4 +91,5 @@ router.beforeEach((to, _from, next) => {
     next({ name: "login", replace: true });
   else next();
 });
+
 export default router;

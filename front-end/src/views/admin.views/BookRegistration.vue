@@ -120,18 +120,18 @@ onMounted(() => {
 </script>
 
 <template>
-    <main class="dark:bg-gray-600 h-full flex flex-col gap-7">
+    <main class="bg-inherit h-full flex flex-col gap-7">
         <div class="flex w-full justify-start gap-3 items-center">
-            <span v-on:click="$router.back">
-                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" stroke="white"
-                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+            <span v-on:click="$router.back" class="text-white">
+                <svg class="w-6 h-6" aria-hidden="true" stroke="cyan"
+                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10"> 
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5H1m0 0 4 4M1 5l4-4" />
                 </svg>
             </span>
             <h1 class="dark:text-gray-100 text-4xl capitalize">Register book</h1>
         </div>
-        <div class="p-3 whitespace-nowrap overflow-x-scroll rounded-lg dark:bg-gray-800 max-h-screen w-full">
-            <form class=" flex w-full justify-start gap-3" v-on:submit="submit">:
+        <div class="p-3 whitespace-nowrap rounded-lg dark:bg-gray-800 max-h-screen w-full border dark:border-gray-700">
+            <form class=" flex w-full justify-start gap-3" v-on:submit="submit">
                 <div class="flex flex-col gap-3 w-full">
                     <SearchDropdown :value.sync="data.collection.title" :required="true" id="title" placeholder="Book title"
                         label="Title" :suggestedValues="collections.map(item => item.title)" @selected="selectCollection" />

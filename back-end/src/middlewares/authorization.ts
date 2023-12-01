@@ -60,7 +60,7 @@ class Authorization {
 
   provideToken(payload: {}): string {
     const token: string = sign(payload, this.secret, {
-      expiresIn: Math.floor(Date.now() / 1000) + 60 * 60,
+      expiresIn: '1h',
     });
     return token;
   }

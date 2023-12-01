@@ -2,27 +2,27 @@ import mongoose, { Schema } from "mongoose";
 import {
   BookState,
   BookStatus,
-  BorrowingStatus,
+  RequestStatus,
   CollectionName,
 } from "./constants";
 import User from "./user.model";
 import Book from "./book.model";
 
-export interface IBorrowing extends Document {
+export interface IRequest extends Document {
   userId: string;
   bookId: string;
   collectionId: string;
   userEmail: string;
   bookIsbn: string;
   bookTitle: string;
-  receivedDate?: Date;
-  returnDate?: Date;
-  returnState: string;
-  receivedState: string;
-  borrowStatus: string;
+  receivingDate?: Date;
+  returningDate?: Date;
+  receivingState: string;
+  returningState: string;
+  requestStatus: string;
 }
 
-export type BorrowingInput = {
+export type RequestInput = {
   userId: string;
   bookId: string;
   collectionId: string;
@@ -31,7 +31,7 @@ export type BorrowingInput = {
   bookTitle: string;
 };
 
-const borrowSchema = new Schema<IBorrowing>(
+const borrowSchema = new Schema<IRequest>(
   {
     userId: {
       type: String,
@@ -60,30 +60,30 @@ const borrowSchema = new Schema<IBorrowing>(
       type: String,
       required: true,
     },
-    receivedDate: {
+    receivingDate: {
       type: Date,
       required: false,
       default: null,
     },
-    returnDate: {
+    returningDate: {
       type: Date,
       required: false,
       default: null,
     },
-    receivedState: {
+    receivingState: {
       type: String,
       default: BookState.Correct,
       enum: BookState,
     },
-    returnState: {
+    returningState: {
       type: String,
       default: BookState.Correct,
       enum: BookState,
     },
-    borrowStatus: {
+    requestStatus: {
       type: String,
-      default: BorrowingStatus.OnHold,
-      enum: BorrowingStatus,
+      default: RequestStatus.OnHold,
+      enum: RequestStatus,
     },
   },
   {
@@ -101,21 +101,21 @@ borrowSchema.pre("save", async function (next) {
     throw new Error("Book is not available");
   }
 
-  const exists = await Borrowing.find({
+  const exists = await Request.find({
     userId: this.userId,
     bookTitle: this.bookTitle,
   });
   const status = new Set([
-    BorrowingStatus.Canceled.valueOf(),
-    BorrowingStatus.Returned.valueOf(),
+    RequestStatus.Canceled.valueOf(),
+    RequestStatus.Returned.valueOf(),
   ]);
-  if (!exists.every((element) => status.has(element.borrowStatus))) {
+  if (!exists.every((element) => status.has(element.requestStatus))) {
     throw new Error("You already have a request for this book");
   }
 
   next();
 });
 
-const Borrowing = mongoose.model(CollectionName.Borrows, borrowSchema);
+const Request = mongoose.model(CollectionName.Borrows, borrowSchema);
 
-export default Borrowing;
+export default Request;

@@ -2,14 +2,14 @@ import { Router } from "express";
 import UserRoute from "./user.route";
 import ApplicationController from "../controllers";
 import BookRoute from "./book.route";
-import BorrowRoute from "./borrowing.route";
+import RequestRoute from "./request.route";
 import { BookCollectionRoute } from "./book_collection.route";
 
 export default class ApplicationRouter {
   routes!: Router;
   userRoute!: UserRoute;
   bookRoute!: BookRoute;
-  borrowRoute!: BorrowRoute;
+  requestRoute!: RequestRoute;
   bookCpRoute!: BookCollectionRoute;
 
   constructor(private controllers: ApplicationController) {
@@ -20,7 +20,7 @@ export default class ApplicationRouter {
   private initializeRoutes() {
     this.userRoute = new UserRoute(this.controllers.userController);
     this.bookRoute = new BookRoute(this.controllers.bookController);
-    this.borrowRoute = new BorrowRoute(this.controllers.borrowController);
+    this.requestRoute = new RequestRoute(this.controllers.requestController);
     this.bookCpRoute = new BookCollectionRoute(
       this.controllers.bookCpController
     );
@@ -30,7 +30,7 @@ export default class ApplicationRouter {
     this.routes = Router();
     this.routes.use("/user", this.userRoute.router);
     this.routes.use("/book", this.bookRoute.router);
-    this.routes.use("/borrowing", this.borrowRoute.router);
+    this.routes.use("/request", this.requestRoute.router);
     this.routes.use("/collection", this.bookCpRoute.router);
   }
 }

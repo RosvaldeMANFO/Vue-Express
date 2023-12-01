@@ -8,7 +8,9 @@ import router from '../../router';
 import SearchBar from "../../components/SearchBar.vue";
 import { BookCollection, CollectionService } from '../../services/Collection.service';
 import Badge from '../../components/Badge.vue';
+import Loader from '../../components/Loader.vue';
 
+const loading: Ref<boolean> = ref(false)
 const searchState: Ref<boolean> = ref(false)
 const mappedBooks: Ref<Array<BookMapped>> = ref([])
 const collections: Ref<Array<BookCollection>> = ref([])
@@ -16,6 +18,7 @@ const service = new BookService()
 
 async function getAllBook() {
     try {
+        loading.value = true
         const collectService = new CollectionService()
         collections.value = await collectService.getAllCollection()
         mappedBooks.value = await service.getAllBook()
@@ -25,6 +28,8 @@ async function getAllBook() {
             title: "Error",
             text: (err as Error).message
         }, 4000)
+    } finally {
+        loading.value = false
     }
 }
 async function deleteBook(book: Book) {
@@ -77,22 +82,24 @@ async function submitSearch(query: string) {
 }
 
 onMounted(async () => {
-    getAllBook()
+    await getAllBook()
 })
 
 </script>
 
 <template>
-    <div class=" dark:bg-gray-600 h-full flex flex-col gap-7">
+    <div class=" dark:bg-gray-600 h-full flex flex-col gap-7 relative">
         <h1 class="dark:text-gray-100 text-4xl capitalize">Books</h1>
         <div class="flex justify-center gap-3 w-full items-center self-end">
             <SearchBar placeholder="ISBN" class="grow" @submit:query="submitSearch" :state.sync="searchState"
                 @clear:query="getAllBook" />
-            <Badge :label="`${countBook()} book(s)`" class="whitespace-nowrap w-fit h-fit p-1.5 text-gray-100 text-xl bg-slate-500 hover:bg-slate-500 cursor-default shadow-sm" />
-            <Badge v-on:click="addBook"  label="Add +" />
+            <Badge :label="`${countBook()} book(s)`"
+                class="whitespace-nowrap w-fit h-fit p-1.5 text-gray-100 text-xl bg-slate-500 hover:bg-slate-500 cursor-default shadow-sm" />
+            <Badge v-on:click="addBook" label="Add +" />
         </div>
-        <div v-if="mappedBooks.length != 0"
-            class=" whitespace-nowrap overflow-x-scroll rounded-lg dark:bg-gray-800 max-h-full w-full">
+        <Loader :state="loading" />
+        <div v-if="mappedBooks.length != 0 && !loading"
+            class=" whitespace-nowrap overflow-x-scroll rounded-lg dark:bg-gray-800 max-h-full w-full border dark:border-gray-700">
             <table class="table-auto shadow-md border-separate border-spacing-y-0 w-full">
                 <thead class="text-left tracking-wider sticky top-0 dark:bg-gray-900 bg-gray-500">
                     <tr class="">
@@ -107,7 +114,8 @@ onMounted(async () => {
                     </tr>
                 </thead>
                 <tbody class="overflow-y-scroll">
-                    <tr :key="mappedBook.book.isbn" v-for="mappedBook in mappedBooks" class="hover:bg-gray-500">
+                    <tr :key="mappedBook.book.isbn" v-for="mappedBook in mappedBooks"
+                        class="dark:hover:bg-gray-400 hover:bg-gray-300">
                         <td class="p-4 dark:text-gray-100">{{ mappedBook.book.isbn }}</td>
                         <td class="p-4 dark:text-gray-100">{{ mappedBook.collection.title }}</td>
                         <td class="p-4 dark:text-gray-100">{{ mappedBook.collection.author }}</td>
@@ -127,7 +135,7 @@ onMounted(async () => {
                 </tbody>
             </table>
         </div>
-        <NothingCard v-else class="self-center"
+        <NothingCard v-else-if="mappedBooks.length == 0 && !loading" class="self-center"
             message="There is no book in the library. You can add them by clicking on create button 🥲!" />
     </div>
 </template>

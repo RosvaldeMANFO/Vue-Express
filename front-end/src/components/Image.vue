@@ -16,8 +16,8 @@ defineProps({
     }
 })
 
-async function onImageChange(evente: Event) {
-    const files = (evente.target as HTMLInputElement).files
+async function onImageChange(event: Event) {
+    const files = (event.target as HTMLInputElement).files
     if (files && files.length != 0) {
         file.value = files[0]
         const imageBase64 = await Utils.convertImageToBase64(file.value)
@@ -25,7 +25,7 @@ async function onImageChange(evente: Event) {
     }
 }
 
-function onClearImage(){
+function onClearImage() {
     file.value = undefined
     emit('clear')
 }
@@ -34,6 +34,9 @@ function onClearImage(){
 
 <template>
     <div class="flex flex-col w-full">
+        <span v-if="image.length != 0 && !disabled" class="text-end text-blue-300 cursor-pointer p-0"
+            @click="onClearImage">Clear</span>
+
         <div class="flex items-center justify-center w-full">
             <label v-if="image.length == 0" for="dropzone-file"
                 class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
@@ -48,12 +51,12 @@ function onClearImage(){
                         or drag and drop</p>
                     <p class="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
                 </div>
-                <input v-bind="file" id="dropzone-file" type="file" class="hidden" @change="onImageChange" :disabled="disabled" />
+                <input v-bind="file" id="dropzone-file" type="file" class="hidden" @change="onImageChange"
+                    :disabled="disabled" />
             </label>
             <div v-else class="flex flex-col items-center justify-center pt-5 pb-6">
-                <img :src="image" alt="Photo" class="w-full h-64 border-2 rounded-lg bg-cover"/>
+                <img :src="image" alt="Photo" class="w-full h-64 border-2 rounded-lg bg-cover" />
             </div>
         </div>
-        <span v-if="image.length != 0 && !disabled"  class="text-end text-blue-300 cursor-pointer -mt-3" @click="onClearImage">Clear</span>
     </div>
 </template>

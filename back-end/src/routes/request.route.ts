@@ -1,11 +1,11 @@
 import { Router } from "express";
-import BorrowController from "../controllers/borrowing.controller";
+import RequestController from "../controllers/request.controller";
 import { Access } from "../middlewares/authorization";
 import { Roles } from "../models/constants";
 
-export default class BorrowRoute {
+export default class RequestRoute {
   router!: Router;
-  constructor(private controller: BorrowController) {
+  constructor(private controller: RequestController) {
     this.configureRoutes();
   }
 
@@ -14,23 +14,23 @@ export default class BorrowRoute {
     this.router.post(
       "/create",
       Access.verify(Roles.Reader),
-      this.controller.createBorrowing
+      this.controller.createRequest
     );
     this.router.put(
-      "/:borrowId",
+      "/:requestId",
       Access.verify(Roles.Admin),
-      this.controller.updateBorrowing
+      this.controller.updateRequest
     );
     this.router.delete(
-      "/:borrowId",
+      "/:requestId",
       Access.verify(Roles.Admin),
-      this.controller.deleteBorrowing
+      this.controller.deleteRequest
     );
     this.router.get(
       "/all",
       Access.verify(Roles.Admin),
-      this.controller.getAllBorrowings
+      this.controller.getAllRequest
     );
-    this.router.post("/find", this.controller.getBorrowingByEmail);
+    this.router.post("/find", this.controller.getRequestByIdOrEmail);
   }
 }

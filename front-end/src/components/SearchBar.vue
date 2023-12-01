@@ -1,12 +1,17 @@
 <script setup lang="ts">
-import { Ref, ref } from 'vue';
+import { Ref, onMounted, ref } from 'vue';
 import Button from './Button.vue';
 import TextEntry from './TextEntry.vue';
 
 const query: Ref<string> = ref("")
 const hasSearch: Ref<boolean> = ref(false)
 const emit = defineEmits()
-defineProps({
+const props = defineProps({
+    value: {
+        type: String,
+        required: false,
+        default: ""
+    },
     state: {
         type: Boolean,
         default: false
@@ -20,17 +25,27 @@ defineProps({
 
 function submit(event: Event) {
     event.preventDefault()
-    if(query.value.length != 0){
+    if (query.value.length != 0) {
         hasSearch.value = true
         emit("submit:query", query.value)
     }
 }
 
-function clearSearch(){
+function clearSearch() {
     hasSearch.value = false
     query.value = ""
     emit("clear:query")
 }
+
+onMounted(() => {
+    if (props.value.length != 0) {
+        query.value = props.value
+        if (query.value.length != 0) {
+            hasSearch.value = true
+            emit("submit:query", query.value)
+        }
+    }
+})
 
 </script>
 

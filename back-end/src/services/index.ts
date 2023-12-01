@@ -1,12 +1,12 @@
 import { BookService, IBookService } from "./book.service";
 import { IBookCollectionService, BookCollectionService } from "./book_collection.service";
-import { BorrowingService, IBorrowingService } from "./borrowing.service";
+import { RequestService, IRequestService } from "./request.service";
 import { IUserService,UserService } from "./user.service";
 
 export default class ApplicationService{
   userService!: IUserService
   bookService!: IBookService
-  borrowService!: IBorrowingService
+  requestService!: IRequestService
   bookCpService!: IBookCollectionService
     
   constructor(){
@@ -16,7 +16,7 @@ export default class ApplicationService{
   private initializeServices(){
     this.userService = new UserService()
     this.bookService = new BookService()
-    this.borrowService = new BorrowingService()
+    this.requestService = new RequestService()
     this.bookCpService = new BookCollectionService()
   }
     

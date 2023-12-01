@@ -1,7 +1,7 @@
 export enum CollectionName {
   Users = "users",
   Books = "books",
-  Borrows = "borrowings",
+  Borrows = "requests",
   BookCollection = "collections"
 }
 
@@ -24,7 +24,7 @@ export enum LiteralGender {
   Neutral = "NEUTRAL"
 }
 
-export enum BorrowingStatus {
+export enum RequestStatus {
   Approved = "APPROVED",
   ToReturn = "TO RETURN",
   OnHold = "ON HOLD",
