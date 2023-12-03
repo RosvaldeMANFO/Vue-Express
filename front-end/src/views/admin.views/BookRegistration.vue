@@ -13,6 +13,7 @@ import TextArea from '../../components/TextArea.vue';
 import SelectOption from '../../components/SelectOption.vue';
 import router from '../../router'
 import { BookCollection, CollectionService } from '../../services/Collection.service';
+import { BookState } from '../../services/Request.service';
 
 const service = new BookService()
 const state: Ref<boolean> = ref(false)
@@ -123,8 +124,8 @@ onMounted(() => {
     <main class="bg-inherit h-full flex flex-col gap-7">
         <div class="flex w-full justify-start gap-3 items-center">
             <span v-on:click="$router.back" class="text-white">
-                <svg class="w-6 h-6" aria-hidden="true" stroke="cyan"
-                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10"> 
+                <svg class="w-6 h-6" aria-hidden="true" stroke="cyan" xmlns="http://www.w3.org/2000/svg" fill="none"
+                    viewBox="0 0 14 10">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5H1m0 0 4 4M1 5l4-4" />
                 </svg>
             </span>
@@ -141,6 +142,9 @@ onMounted(() => {
                     <SelectOption :value.sync="data.collection.genre" :options="Object.values(LiteralGender)" id="gender"
                         label="Literal gender" placeholder="Select a gender" :disabled="disableField" :required="true"
                         @update:value="value => data.collection.genre = value" />
+                    <SelectOption :value.sync="data.book.state!" :options="Object.values(BookState)" id="state"
+                        label="Book state" placeholder="Select a state" :disabled="disableField" :required="true"
+                        @update:value="value => data.book.state = value" />
                     <TextEntry id="author" label="Author" :value.sync="data.collection.author" type="text"
                         placeholder="Enter or chose a title" :required="true" :disabled="disableField"
                         @update:value="(value) => data.collection.author = value" />

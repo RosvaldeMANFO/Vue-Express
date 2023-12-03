@@ -87,7 +87,7 @@ onMounted(async () => {
                     </tr>
                 </thead>
                 <tbody v-for="reader, index in readers" class="overflow-y-scroll">
-                    <tr :key="reader._id" v-if="reader.role == 'READER'" class="dark:hover:bg-gray-400 hover:bg-gray-300"
+                    <tr :key="reader._id" v-if="reader.role == 'READER'" class="dark:hover:bg-gray-400 hover:bg-gray-300 cursor-pointer"
                         @click="goToHistory(reader._id)">
                         <td class="p-4 dark:text-gray-100">{{ index }}</td>
                         <td class="p-4 dark:text-gray-100">{{ reader.email }}</td>

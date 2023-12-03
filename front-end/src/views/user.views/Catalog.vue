@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import SearchBar from "../../components/SearchBar.vue";
 import { onMounted, ref, Ref } from "vue";
-import { BookMapped, BookService } from '../../services/Book.service';
+import { Book, BookAggregation, BookMapped, BookService } from '../../services/Book.service';
 import BookCard from "../../components/BookCard.vue";
 import { notify } from 'notiwind';
 import NothingCard from "../../components/NothingCard.vue";
@@ -11,9 +11,11 @@ import { useSessionStore } from "../../store";
 import { storeToRefs } from "pinia";
 import Loader from "../../components/Loader.vue";
 
+
 const loading: Ref<boolean> = ref(false)
 const searchState: Ref<boolean> = ref(false)
-const books: Ref<Array<BookMapped>> = ref([])
+const books: Ref<BookMapped[]> = ref([])
+const aggregatedBooks: Ref<BookAggregation[]> = ref([])
 const service = new BookService()
 const store = useSessionStore()
 const { userId, email } = storeToRefs(store)
@@ -23,6 +25,7 @@ async function submitSearch(query: string) {
    try {
       loading.value = true
       books.value = service.findBook(books.value, query)
+      aggregatedBooks.value =aggregateBook(books.value)
    } catch (err) {
       notify({
          group: "bottom",
@@ -39,15 +42,15 @@ onMounted(async () => {
    await getAllBook()
 })
 
-async function borrow(map: BookMapped) {
+async function borrow(book: Book, title: string) {
    try {
       const data: RequestInput = {
          userId: userId.value,
-         bookId: map.book._id!,
-         collectionId: map.collection._id!,
+         bookId: book._id!,
+         collectionId: book._id!,
          userEmail: email.value,
-         bookIsbn: map.book.isbn,
-         bookTitle: map.collection.title,
+         bookIsbn: book.isbn,
+         bookTitle: title,
       }
       const borrowService = new RequestService()
       await borrowService.sendRequest(data)
@@ -69,6 +72,7 @@ async function getAllBook() {
    try {
       loading.value = true
       books.value = await service.getAllBook()
+      aggregatedBooks.value = aggregateBook(books.value)
    } catch (err) {
       notify({
          group: "bottom",
@@ -79,6 +83,27 @@ async function getAllBook() {
       loading.value = false
    }
 }
+
+function aggregateBook(mappedBooks: BookMapped[]): BookAggregation[] {
+   const result: BookAggregation[] = []
+   mappedBooks.flatMap((current, _index, array) => {
+      const aggregate: BookAggregation = {
+         books: array.filter(value => current.book.collectionId == value.book.collectionId && current.book.status == 'AVAILABLE').map(mappedBook => mappedBook.book),
+         collection: current.collection
+      }
+      if (result.length != 0) {
+         if (!result.every((value) => value.collection._id == aggregate.collection._id)) {
+            result.push(aggregate)
+         }
+      } else {
+         result.push(aggregate)
+      }
+
+   })
+   return result;
+}
+
+
 </script>
 
 <template>
@@ -88,8 +113,8 @@ async function getAllBook() {
          placeholder="Title, Author, publishing house/date (YYYY-MM-dd)" />
       <Loader :state="loading" />
       <div v-if="books.length != 0 && !loading"
-         class=" w-full grid grid-flow-row items-center md:grid-cols-2 xl:grid-cols-3 place-items-center gap-2">
-         <BookCard v-for="book in books" :mappedBook="book" @borrow:book="borrow"></BookCard>
+         class=" w-full grid grid-flow-row items-center md:grid-cols-2 xl:grid-cols-3 place-items-center gap-5">
+         <BookCard v-for="aggregate in aggregatedBooks" :aggregate="aggregate" @borrow:book="borrow"></BookCard>
       </div>
       <NothingCard v-else-if="books.length == 0 && !loading"
          message="There is no book matching to this word try again please 🥲!" />

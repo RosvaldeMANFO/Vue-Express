@@ -1,8 +1,8 @@
-import Application from "./application";
-import dotenv from "dotenv";
+import Application from './application'
+import dotenv from 'dotenv'
 
-dotenv.config();
+dotenv.config()
 
-const application = new Application();
+const application = new Application()
 
-application.startServer();
+application.startServer()

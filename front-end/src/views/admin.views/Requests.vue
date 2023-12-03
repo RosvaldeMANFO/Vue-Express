@@ -110,9 +110,9 @@ onMounted(async () => {
                 class="whitespace-nowrap table-auto shadow-md border-separate border-spacing-y-0 w-full border dark:border-gray-700">
                 <thead class="text-left tracking-wider sticky top-0 dark:bg-gray-900 bg-gray-500">
                     <tr>
-                        <th class=" dark:text-gray-100  p-4">Email</th>
-                        <th class=" dark:text-gray-100  p-4">Title</th>
-                        <th class=" dark:text-gray-100  p-4">Request status</th>
+                        <th class="dark:text-gray-100  p-4">Email</th>
+                        <th class="dark:text-gray-100  p-4">Title</th>
+                        <th class="dark:text-gray-100  p-4">Request status</th>
                         <th class="dark:text-gray-100  p-4">Receiving state</th>
                         <th class="dark:text-gray-100  p-4">Returning state</th>
                         <th class="dark:text-gray-100  p-4">Request date</th>
