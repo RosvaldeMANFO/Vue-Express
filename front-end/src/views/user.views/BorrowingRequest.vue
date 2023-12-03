@@ -107,13 +107,10 @@ onMounted(async () => {
                         <td class="p-4 dark:text-gray-100">{{ request.returningState }}</td>
                         <td class="p-4 dark:text-gray-100">{{ new Date(request.createdAt).toLocaleDateString() }}</td>
                         <td class="p-4 dark:text-gray-100">{{ new Date(request.updatedAt).toLocaleDateString() }}</td>
-                        <td v-if="request.requestStatus == RequestStatus.OnHold.valueOf()" class="p-4 dark:text-gray-100">
-                            <Button @click="cancel(request)" :state="false"
-                                :label="request.requestStatus != 'CANCELED' ? 'Cancel' : 'Canceled'" type="button"
-                                :class="{ 'bg-red-400 hover:bg-red-400': request.requestStatus == 'CANCELED' }" />
-                        </td>
-                        <td v-else>
-                            <svg xmlns="http://www.w3.org/2000/svg" height="16" width="14"
+                        <td class="p-4 flex items-center justify-center">
+                            <Button v-if="request.requestStatus == RequestStatus.OnHold.valueOf()" @click="cancel(request)" :state="false"
+                                label="Cancel" type="button" />
+                            <svg v-else xmlns="http://www.w3.org/2000/svg" height="16" width="14"
                                 viewBox="0 0 448 512"><!--!Font Awesome Free 6.5.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2023 Fonticons, Inc.-->
                                 <path fill="gray"
                                     d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z" />

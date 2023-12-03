@@ -48,7 +48,7 @@ function validateRequest(){
 
 <template>
     <div
-        class="p-5 rounded-md bg-white dark:text-gray-100 absolute shadow-md border dark:border-gray-700 -translate-y-1/2 top-1/2 right-1/2 translate-x-1/2 flex flex-col gap-3 w-[90%] h-fit sm:w-[70%]">
+        class="p-5 rounded-md bg-inherit dark:text-gray-100 absolute shadow-md border dark:border-gray-700 -translate-y-1/2 top-1/2 right-1/2 translate-x-1/2 flex flex-col gap-3 w-[90%] h-fit sm:w-[70%]">
         <span class="cursor-pointer self-end" @click="closeDialogForm">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path d="M0 0h24v24H0z" fill="none" />

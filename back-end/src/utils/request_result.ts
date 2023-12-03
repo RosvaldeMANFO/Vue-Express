@@ -7,38 +7,32 @@ export enum HttpCode {
     INTERNAL_SERVER_ERROR = 500,
 }
 
-export class RequestSuccess<T>{
-  httpCode: HttpCode;
-  data?: T;
-  description: string;
-  constructor(httpCode: HttpCode, data:T, description: string){
+export class RequestSuccess<T> {
+    httpCode: HttpCode
+    data?: T
+    description: string
+    constructor(httpCode: HttpCode, data: T, description: string) {
+        Object.setPrototypeOf(this, new.target.prototype)
 
-    Object.setPrototypeOf(this, new.target.prototype);
-
-    this.httpCode = httpCode;
-    this.data = data;
-    this.description = description
-  }
+        this.httpCode = httpCode
+        this.data = data
+        this.description = description
+    }
 }
 
-export class RequestFailure extends Error{
-  httpCode: HttpCode;
-  message: string;
-  description: string;
-
-  constructor(
-    httpCode: HttpCode,
-    message: string,
+export class RequestFailure extends Error {
+    httpCode: HttpCode
+    message: string
     description: string
-  ){
-    super(message);
 
-    Object.setPrototypeOf(this, new.target.prototype);
+    constructor(httpCode: HttpCode, message: string, description: string) {
+        super(message)
 
-    this.httpCode = httpCode
-    this.message = message
-    this.description = description
-    Error.captureStackTrace(this, this.constructor);
-  }
+        Object.setPrototypeOf(this, new.target.prototype)
 
+        this.httpCode = httpCode
+        this.message = message
+        this.description = description
+        Error.captureStackTrace(this, this.constructor)
+    }
 }

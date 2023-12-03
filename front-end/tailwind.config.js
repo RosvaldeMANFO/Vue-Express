@@ -11,6 +11,9 @@ export default {
   ],
   theme: {
     extend: {
+      backgroundImage:{
+        'onboarding': 'url(./src/assets/bg.jpg)'
+      }
     },
   },
   plugins: [
