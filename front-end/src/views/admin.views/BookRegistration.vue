@@ -160,6 +160,9 @@ onMounted(() => {
                     <Image class="" :image.sync="data.collection.bookCover" :disabled="disableField"
                         @update:value="value => data.collection.bookCover = value"
                         @clear="data.collection.bookCover = ''" />
+                    <SelectOption :value.sync="data.book.status!" :options="['AVAILABLE', 'UNAVAILABLE']" id="status"
+                        label="Book status" placeholder="Select a status" :required="true"
+                        @update:value="value => data.book.status = value" />
                     <div class="flex justify-between gap-7">
                         <Button :state="false" label="Reset" type="reset" class="bg-red-300 hover:bg-red-400" />
                         <Button :state="state" label="Save" type="submit" />

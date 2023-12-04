@@ -40,7 +40,6 @@ export class BookCollectionService implements IBookCollectionService {
 
     async findCollection(filterOptions: Map<string, unknown>): Promise<RequestSuccess<IBookCollection[]>> {
         const options = Utils.cleanFilterOptions(filterOptions)
-        console.log(options)
         const result = await BookCollection.find({ $or: options })
         return new RequestSuccess(HttpCode.OK, result, '')
     }

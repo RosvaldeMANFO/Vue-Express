@@ -92,17 +92,14 @@ class UserService implements IUserService {
     }
 
     async cancelRequest(requestId: string): Promise<RequestSuccess<string>> {
-        console.log(requestId)
         const result = await Request.findByIdAndUpdate(requestId, {
             requestStatus: RequestStatus.Canceled,
         })
-        console.log(JSON.stringify(result))
         return new RequestSuccess(HttpCode.OK, `Request ${requestId} canceled`, `Canceling borrow  ${requestId}`)
     }
 
     async findUser(filterOptions: FindOption): Promise<RequestSuccess<[]>> {
         const options = this.cleanFilterOptions(filterOptions)
-        console.log(options)
         const result = await User.find({
             $or: options,
         }).sort({ fullName: 'asc' })

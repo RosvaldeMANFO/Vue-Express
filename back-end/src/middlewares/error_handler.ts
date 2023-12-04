@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from 'express'
 import { HttpCode, RequestFailure } from '../utils/request_result'
 
 export const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
-    console.log(err)
     if (err instanceof RequestFailure) {
         res.status(err.httpCode).json({
             status: err.httpCode,

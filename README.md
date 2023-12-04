@@ -42,7 +42,7 @@ Le projet dispose de fonctionnalités dédiées au profil **Administrateur** et 
 >
 > En tant que lecteur, je peux:
 >
-> -   Me connecter ou créer un nouveau compte lecteur
+> -   Me connecter (email: ros@flo.com, password: Rosvalde@007) ou créer un nouveau compte lecteur
 > -   Consulter le catalogue de livres
 > -   Émettre une demande d'emprunt pour exemplaire du catalogue en cliquant le button emprunter
 > -   Consulter le status de mes demande d'emprunt depuis le menu **Requests**

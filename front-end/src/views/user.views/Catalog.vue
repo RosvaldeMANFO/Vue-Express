@@ -25,7 +25,7 @@ async function submitSearch(query: string) {
    try {
       loading.value = true
       books.value = service.findBook(books.value, query)
-      aggregatedBooks.value =aggregateBook(books.value)
+      aggregatedBooks.value = aggregateBook(books.value)
    } catch (err) {
       notify({
          group: "bottom",
@@ -91,13 +91,9 @@ function aggregateBook(mappedBooks: BookMapped[]): BookAggregation[] {
          books: array.filter(value => current.book.collectionId == value.book.collectionId && current.book.status == 'AVAILABLE').map(mappedBook => mappedBook.book),
          collection: current.collection
       }
-      if (result.length != 0) {
-         if (!result.every((value) => value.collection._id == aggregate.collection._id)) {
-            result.push(aggregate)
-         }
-      } else {
+      if (!result.find(element => element.collection._id == aggregate.collection._id)) {
          result.push(aggregate)
-      }
+      } 
 
    })
    return result;

@@ -14,7 +14,6 @@ export default class BookController {
     getBookById = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const book = await this.bookService.getBookById(req.params.bookId)
-            console.log(JSON.stringify(book))
             res.status(HttpCode.OK).json(book.data)
         } catch (err) {
             next(err)

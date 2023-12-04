@@ -144,7 +144,7 @@ onMounted(async () => {
             <Badge :label="`${ collections.length } Title(s)`" class="whitespace-nowrap w-fit h-fit p-1.5 text-gray-100 text-xl bg-slate-500 hover:bg-slate-500 cursor-default" />
         </div>
         <div class="w-full flex md:flex-row justify-start gap-3 flex-col">
-            <div class="grow-1">
+            <div class="md:w-[50%] grow-1">
                 <div v-if="collections.length != 0 && !loading"
                     class=" whitespace-nowrap overflow-x-scroll rounded-lg dark:bg-gray-800 max-h-screen w-full border dark:border-gray-700">
                     <table class="table-auto shadow-md  border-separate border-spacing-y-0 w-full">

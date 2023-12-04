@@ -43,7 +43,6 @@ export class RequestService implements IRequestService {
             rules.push({ _id: new Types.ObjectId(query) })
         }
         const result = await Request.find({ $or: rules })
-        console.log(query)
         return new RequestSuccess(HttpCode.OK, result, `Getting request of ${query}`)
     }
 
