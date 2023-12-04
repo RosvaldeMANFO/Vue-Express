@@ -1,6 +1,6 @@
 # GUID D'UTILISATION
 
-## Execution
+## Exécution
 
 > ## Prérequis
 >
