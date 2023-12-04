@@ -10,6 +10,7 @@
 > ## Commandes (A executer dans cet ordre)
 >
 > > -   git clone https://github.com/FlorientManfo/Vue-Express.git
+> > -   cd Vue-Express
 > > -   cd back-end
 > > -   npm i
 > > -   npm run dev
@@ -25,7 +26,7 @@ Le projet dispose de fonctionnalités dédiées au profil **Administrateur** et 
 >
 > En tant qu'administrateur, je peux :
 >
-> -    Me connecter (email: Admin@admin.com, mot de passe: Admin@007)
+> -   Me connecter (email: Admin@admin.com, mot de passe: Admin@007)
 > -   Enregistrer un ou plusieurs livres simultanément en cliquant sur le bouton ajouter depuis la liste des livres puis completer le formulaire
 > -   Éditer les information d'un livre
 > -   Créer une nouvelle collection de livre depuis le menu Collection
