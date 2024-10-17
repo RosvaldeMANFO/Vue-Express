@@ -1,4 +1,4 @@
-# GUID D'UTILISATION
+# GUIDE D'UTILISATION
 
 ## Exécution
 
